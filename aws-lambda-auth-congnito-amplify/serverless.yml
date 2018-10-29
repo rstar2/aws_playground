@@ -1,6 +1,7 @@
 service: my-auth-congnito-amplify
 
 custom:
+  stage: ${opt:stage, 'dev'}
   # Configuration for the serverless-offline plugin https://github.com/dherault/serverless-offline
   serverless-offline:
     host: localhost
@@ -26,7 +27,7 @@ provider:
   profile: serverless-cli
   runtime: nodejs8.10
 
-  stage: ${opt:stage, 'dev'}
+  stage: ${self:custom.stage}
   region: eu-central-1
 
 functions:
@@ -41,5 +42,8 @@ functions:
       
 resources:
   # Cognito
-#   - ${file(cognito-user-pool.yml)}
-#   - ${file(cognito-identity-pool.yml)}
+  # https://www.tonytruong.net/serverless-framework-authentication-and-logging-with-aws-cognito/
+  # https://cloudly.tech/blog/serverless-authorizers-2/
+  # https://serverless-stack.com/chapters/cognito-as-a-serverless-service.html
+  - ${file(cognito-user-pool.yml)}
+  - ${file(cognito-identity-pool.yml)}

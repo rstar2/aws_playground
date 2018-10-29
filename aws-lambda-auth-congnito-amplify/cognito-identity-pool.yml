@@ -1,31 +1,32 @@
 Resources:  
   # The federated identity for our user pool to auth with
-  CognitoIdentityPool:
+  MyIdentityPool:
     Type: AWS::Cognito::IdentityPool
     Properties:
       # Generate a name based on the stage
-      IdentityPoolName: GoAuth${self:custom.stage}IdentityPool
+      # The IdentityPoolName name has to satisfy regex [\w ]+
+      IdentityPoolName: MyAuth${self:custom.stage}IdentityPool
       # Don't allow unathenticated users
       AllowUnauthenticatedIdentities: false
       # Link to our User Pool
       CognitoIdentityProviders:
         - ClientId:
-            Ref: CognitoUserPoolClient
+            Ref: MyUserPoolClient
           ProviderName:
-            Fn::GetAtt: [ "CognitoUserPoolMyPool", "ProviderName" ]
+            Fn::GetAtt: [ "MyUserPool", "ProviderName" ]
 
   # IAM roles
-  CognitoIdentityPoolRoles:
+  MyIdentityPoolRoles:
     Type: AWS::Cognito::IdentityPoolRoleAttachment
     Properties:
       IdentityPoolId:
-        Ref: CognitoIdentityPool
+        Ref: MyIdentityPool
       Roles:
         authenticated:
-          Fn::GetAtt: [CognitoAuthRole, Arn]
+          Fn::GetAtt: [MyIdentityPoolAuthenticatedRole, Arn]
 
   # IAM role used for authenticated users
-  CognitoAuthRole:
+  MyIdentityPoolAuthenticatedRole:
     Type: AWS::IAM::Role
     Properties:
       Path: /
@@ -40,7 +41,7 @@ Resources:
             Condition:
               StringEquals:
                 'cognito-identity.amazonaws.com:aud':
-                  Ref: CognitoIdentityPool
+                  Ref: MyIdentityPool
               'ForAnyValue:StringLike':
                 'cognito-identity.amazonaws.com:amr': authenticated
       Policies:
@@ -68,10 +69,12 @@ Resources:
                       - ':'
                       - Ref: AWS::AccountId
                       - ':'
+                      #  !!! This will allow access to the API Gateway for this CloudFormation
                       - Ref: ApiGatewayRestApi
                       - '/*'
+
 # Print out the Id of the Identity Pool that is created
 Outputs:  
   IdentityPoolId:
     Value:
-      Ref: CognitoIdentityPool
+      Ref: MyIdentityPool
