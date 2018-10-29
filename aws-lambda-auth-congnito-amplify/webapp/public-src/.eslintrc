@@ -1,0 +1,28 @@
+{
+    "env": {
+        "es6": true,
+        "browser": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2016,
+        "sourceType": "module"
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "consistent-return":"error",
+        "indent"           : ["warn", 4,  { "SwitchCase": 1 }],
+        "semi"             : ["warn", "always"],
+        "quotes"           : ["error", "single"],
+        "no-else-return"   : "warn",
+        "space-unary-ops"  :"error",
+        "no-console"       : "off",
+        "no-var"           : "warn"
+    },
+    "globals": {
+        "APP_IS_LOCAL": false,
+        "APP_CONTEXT_PATH": false,
+        "html": false,
+        "Vue": false
+    }
+}
+  

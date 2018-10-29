@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+	<link href="{{context-path}}/public/styles/build.app.css" rel="stylesheet">
+</head>
+
+<body>
+	<div id="app">
+		Hello
+	</div>
+
+	
+	<script>
+        {{!-- Make the context-path be accessible from the JS also --}}
+		{{!-- const API_BASE_URL = '{{context-path}}'; --}}
+		
+        const API_BASE_URL = 'http://localhost:4000';
+	</script>
+
+	<script src="{{context-path}}/public/js/build.app.js"></script>
+
+</body>
+
+</html>
