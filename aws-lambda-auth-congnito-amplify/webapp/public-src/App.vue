@@ -24,6 +24,7 @@
 
 <script>
 import api from "./services/api";
+import * as auth from "./services/auth";
 import DialogAuth from "./components/DialogAuth";
 import Notifications from "./components/Notifications";
 
@@ -59,7 +60,7 @@ export default {
     },
   },
   methods: {
-    fetch() {
+    doApi() {
 		const args = Array.prototype.slice.call(arguments);
 		if (args.length === 1) {
 			args.push(null);
@@ -69,8 +70,13 @@ export default {
     },
     
     doAuth(user) {
-      const action = this.dialogAuth.isRegister ? "register" : "login";
-      this.fetch(`auth/${action}`, user)
+      let action;
+      if (this.dialogAuth.isRegister) {
+          action = auth.register(user.email, user.password);
+      } else {
+          action = auth.login(user);
+      }
+      action
         .then(({ token }) => (this.authJWT = token))
         .then(
           () =>
@@ -89,7 +95,7 @@ export default {
     },
 
     doApiTest() {
-      this.fetch(`${API_BASE_URL}/api/test`)
+      this.doApi(`${API_BASE_URL}/api/test`)
         .then(data => this.info = data.message)
         .catch(() => (this.info = "Failed API Test"));
     },
