@@ -1,0 +1,98 @@
+service: my-antivirus-check
+
+custom:
+  clamavBucket: ${self:service}-clamav-${self:provider.stage}
+  uploadBucket: ${self:service}-upload-${self:provider.stage}
+
+provider:
+  name: aws
+  profile: serverless-cli
+  runtime: nodejs8.10
+
+  stage: dev
+  region: eu-central-1
+
+  environment:
+    # this is the bucket that will store the ClamAV definitions file
+    S3_BUCKET_CLAMAV: ${self:custom.clamavBucket}
+
+  iamRoleStatements:
+    # Allow the functions to List/Put/Get from the S3 Bucket where the definitions files are stored,
+    # e.g. ClamavBucket, e.g ${self:custom.clamavBucket})
+    - Effect: Allow
+      Action:
+        - "s3:ListBucket"
+      Resource:
+        - "Fn::GetAtt": [ ClamavBucket, Arn ]
+
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+        - "s3:GetObject"
+      Resource:
+        Fn::Join:
+          - ""
+          - - "Fn::GetAtt": [ ClamavBucket, Arn ]
+            - "/*"
+
+    # Allow the functions to Get/PutTagging from the S3 Bucket where the files are being uploaded (and thus needed to be scanned)
+    # e.g ${self:custom.uploadBucket})
+    - Effect: "Allow"
+      Action:
+        - "s3:GetObject"
+        - "s3:PutObjectTagging"
+      # One line as YAML object 
+      # Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", ${self:custom.uploadBucket}, "/*" ] ] }
+      # Another way in YAML
+      Resource:
+        Fn::Join:
+          - ""
+          - - "arn:aws:s3:::"
+            - ${self:custom.uploadBucket}
+            - "/*"
+
+    # Allow the function to send emails
+    - Effect: "Allow"
+      Action:
+        - "ses:SendEmail"
+      Resource: ["*"]        
+
+# you can add packaging information here
+#package:
+#  include:
+#    - include-me.js
+#    - include-me-dir/**
+#  exclude:
+#    - exclude-me.js
+#    - exclude-me-dir/**
+
+functions:
+  - refresh:
+      handler: av-refresh.handle
+      timeout: 300 # optional, in seconds, default is 6
+      events:
+        - schedule: rate(6 hours)
+
+  - scan:
+      handler: av-scan.handle
+      timeout: 300 # optional, in seconds, default is 6
+      events:
+        - s3:   # this Lambda S3 event will create the S3 bucket
+            bucket: ${self:custom.uploadBucket}
+            event: s3:ObjectCreated:*
+      environment:
+        EMAIL_SENDER: rstardev@abv.bg
+        EMAIL_RECEIVER: rstar2@abv.bg
+
+resources:
+  Resources:
+    ClamavBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.clamavBucket}
+
+    # No need of this resource as it will be auto - created by the S3 trigger event   
+    # UploadBucket:
+    #   Type: AWS::S3::Bucket
+    #   Properties:
+    #     BucketName: ${self:custom.uploadBucket}
