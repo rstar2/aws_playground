@@ -56,3 +56,20 @@ $ apig-test \
 ```
 $ npx apig-test --username sls@test.com --password Passw0rd! --user-pool-id eu-central-1_3UwYWOxmP --app-client-id 3nnu6s2t0se8jmo1lppirdp5t8 --cognito-region eu-central-1 --identity-pool-id eu-central-1:5cbd3c7e-1eb1-4c6e-b3e8-d346223fd500 --invoke-url https://0lay1skif0.execute-api.eu-central-1.amazonaws.com/dev --path-template /api/test --api-gateway-region eu-central-1
 ```
+
+
+## TODO
+1. Finish Register/Auth.signUp()
+
+2. Use aws4
+```
+$ npm i aws4
+```
+https://serverless-stack.com/chapters/connect-to-api-gateway-with-iam-auth.html
+https://medium.freecodecamp.org/how-to-secure-microservices-on-aws-with-cognito-api-gateway-and-lambda-4bfaa7a6583c (npm install aws4)
+https://github.com/csepulv/auth-api-demo/blob/master/docs/resource-cheatsheet.md
+
+3. Use 'aws-amplify-vue' - https://aws-amplify.github.io/docs/js/vue
+```
+$ npm i aws-amplify-vue
+```

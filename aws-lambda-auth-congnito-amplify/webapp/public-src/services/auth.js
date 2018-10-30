@@ -21,18 +21,39 @@ Amplify.configure({
  * 
  * @param {String} email 
  * @param {String} password 
- * @return {Promise}
+ * @return {Promise<String>}
  */
 export const login = async ({ email, password }) => {
-    return Auth.signIn(email, password);
+    return Auth.signIn(email, password)
+          .then(data => console.dir(data) || data)
+        .then(({ signInUserSession }) => signInUserSession.idToken.jwtToken)
+        .catch(() => null);
 };
 
 /**
  * 
  * @param {String} email 
  * @param {String} password 
- * @return {Promise}
+ * @return {Promise<String>}
  */
-export const register = async ({ email, password }) => {
+export const register = async ({ email, name, password }) => {
     return Auth.signUp(email, password);
 };
+
+/**
+ * 
+ * @return {Promise<String>}
+ */
+export const logout = async () => {
+    return Auth.signOut().then(() => null);
+};
+
+/**
+ * @return {Promise<String>}
+ */
+export const getToken = async () => {
+    return Auth.currentAuthenticatedUser()
+          .then(data => console.dir(data) || data)
+        .then(({ signInUserSession }) => signInUserSession.idToken.jwtToken)
+        .catch(() => null);
+}
