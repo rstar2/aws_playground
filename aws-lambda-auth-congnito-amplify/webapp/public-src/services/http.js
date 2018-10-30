@@ -1,5 +1,8 @@
+import { Auth } from 'aws-amplify';
+import * as aws4 from 'aws4';
+
 // eslint-disable-next-line
-const api = (url, data, authToken) => {
+const http = (url, data, authToken) => {
     const opts = {
         headers: {},
     };
@@ -9,7 +12,7 @@ const api = (url, data, authToken) => {
             'Authorization': 'Bearer ' + authToken,
         });
     }
-    
+
     // if sending data as JSON body must be JSON encoded string
     // AND !!! 'Content-Type' header must be valid JSON one
     if (data) {
@@ -34,4 +37,29 @@ const api = (url, data, authToken) => {
         .then(res => res.json());
 };
 
-export default api;
+export default http;
+
+
+// TODO:
+export const authenticatedHttp = async (region, endpoint, path) => {
+    const opts = {
+        method: "GET",
+        service: "execute-api",
+        region,
+        path,
+        // host: apiHost,
+        // headers: { "x-api-key": apiKey },
+        url: endpoint + path
+    }; 
+    const credentials = await Auth.currentCredentials();
+    const { accessKeyId, secretAccessKey, sessionToken } = credentials;
+    const request = aws4.sign(opts, {
+        accessKeyId,
+        secretAccessKey,
+        sessionToken
+    });
+    delete request.headers.Host;
+    return fetch(opts.url, {
+        headers: request.headers
+    });
+}

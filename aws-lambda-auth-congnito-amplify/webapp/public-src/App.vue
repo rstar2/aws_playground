@@ -6,7 +6,8 @@
             </div>
             <div class="md-toolbar-section-end">
                 <template v-if="auth" >
-					<md-button @click="doApiTest" class="md-primary md-raised">API Test</md-button>
+					<md-button @click="doApiWithAmplify" class="md-primary md-raised">API Test (Amplify)</md-button>
+					<md-button @click="doApiWithDirectHTTP" class="md-primary md-raised">API Test (direct HTTP)</md-button>
                     <md-button @click="doLogout" class="md-primary md-raised">Logout</md-button>
 				</template>
 				<template v-else>
@@ -24,9 +25,10 @@
 </template>
 
 <script>
-// import api from "./services/api";
 import * as auth from "./services/auth";
 import { API } from "aws-amplify";
+
+import { authenticatedHttp as http } from "./services/http";
 
 import DialogAuth from "./components/DialogAuth";
 import Notifications from "./components/Notifications";
@@ -89,16 +91,18 @@ export default {
         });
     },
 
-    doApiTest() {
-      // TODO: Call the API Gateway with IAM Auth from the browser/client directly - we need to sign the request a
-      //   api(`${API_BASE_URL}/test`, null, this.authJWT)
-      //     .then(data => (this.info = data.message))
-      //     .catch(() => (this.info = "Failed API Test"));
-
-      // use the aws amplify API (the API endpoint that we )
+    doApiWithAmplify() {
+      // call the API Gateway with IAM Auth with AWS Amplify API (with the endpoint that we registered - named 'api')
       API.post("api", "/test", {
         body: JSON.stringify({ a: 1, b: "string" })
       })
+        .then(data => (this.info = data.message))
+        .catch(() => (this.info = "Failed API Test"));
+    },
+
+    doApiWithDirectHTTP() {
+      // call the API Gateway with IAM Auth directly (we need to sign the request)
+      http(AWS_AMPLIFY.api.region, AWS_AMPLIFY.api.endpoint, '/test')
         .then(data => (this.info = data.message))
         .catch(() => (this.info = "Failed API Test"));
     }

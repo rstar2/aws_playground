@@ -13,6 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "aws-amplify": "^1.1.7",
+    "aws4": "^1.8.0",
     "vue": "^2.5.17",
     "vue-material": "^1.0.0-beta-10.2",
     "vuelidate": "^0.7.4"

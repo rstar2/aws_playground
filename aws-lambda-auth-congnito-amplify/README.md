@@ -67,9 +67,11 @@ $ npm i aws4
 ```
 https://serverless-stack.com/chapters/connect-to-api-gateway-with-iam-auth.html
 https://medium.freecodecamp.org/how-to-secure-microservices-on-aws-with-cognito-api-gateway-and-lambda-4bfaa7a6583c (npm install aws4)
-https://github.com/csepulv/auth-api-demo/blob/master/docs/resource-cheatsheet.md
 
 3. Use 'aws-amplify-vue' - https://aws-amplify.github.io/docs/js/vue
 ```
 $ npm i aws-amplify-vue
 ```
+
+4. Remove Express-app and just use simple webpack SPA (with webpak-dev-server or later with 'serve')
+  - needs
