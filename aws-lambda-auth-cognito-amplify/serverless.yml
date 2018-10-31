@@ -1,0 +1,49 @@
+service: my-auth-congnito-amplify
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  # Configuration for the serverless-offline plugin https://github.com/dherault/serverless-offline
+  serverless-offline:
+    host: localhost
+    port: 4000
+    # Adds a prefix to every path, to send your requests to http://localhost:3000/[prefix]/[your_path] instead. E.g. -p dev
+    # prefix: ${self:provider.stage}
+    # Disable the authorizers
+    # noAuth: true
+
+plugins:
+  # plugin for testing all offline , without need to deploy it (sls deploy) all the time to AWS
+  - serverless-offline
+
+package:
+  exclude:
+    - .vscode/**
+    - tests/**
+    - '**/__mocks__/**'
+    - webapp/**
+
+provider:
+  name: aws
+  profile: serverless-cli
+  runtime: nodejs8.10
+
+  stage: ${self:custom.stage}
+  region: eu-central-1
+
+functions:
+  - api:
+      handler: handler.api
+      events:
+        - http:
+            path: api/{any+}
+            method: ANY
+            cors: true
+            authorizer: aws_iam
+      
+resources:
+  # Cognito
+  # https://www.tonytruong.net/serverless-framework-authentication-and-logging-with-aws-cognito/
+  # https://cloudly.tech/blog/serverless-authorizers-2/
+  # https://serverless-stack.com/chapters/cognito-as-a-serverless-service.html
+  - ${file(cognito-user-pool.yml)}
+  - ${file(cognito-identity-pool.yml)}
