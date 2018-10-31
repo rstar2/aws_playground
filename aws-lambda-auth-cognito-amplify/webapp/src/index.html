@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+  <title>Auth with AWS Cognito and Amplify</title>
+</head>
+
+<body>
+  <div id="app">
+    Hello
+  </div>
+
+  <!-- TODO: Use webpack DefinePlugin or DotenvPlugin -->
+  <script>
+    const API_BASE_URL = 'https://0lay1skif0.execute-api.eu-central-1.amazonaws.com/dev/api';
+
+    // if using Amplify.API to access the Lambda
+    const AWS_AMPLIFY = {
+      cognito: {
+        region: "eu-central-1",
+        userPoolId: "eu-central-1_3UwYWOxmP",
+        userPoolWebClientId: "3nnu6s2t0se8jmo1lppirdp5t8",
+        identityPoolId: "eu-central-1:5cbd3c7e-1eb1-4c6e-b3e8-d346223fd500"
+      },
+      // only a single API endpoint is gonna be used
+      api: {
+        region: 'eu-central-1',
+        endpoint: API_BASE_URL,
+      }
+    }
+  </script>
+
+</body>
+
+</html>

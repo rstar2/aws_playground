@@ -58,7 +58,7 @@ $ npx apig-test --username sls@test.com --password Passw0rd! --user-pool-id eu-c
 ```
 
 
-## TODO
+## TODO Webapp
 1. Finish Register/Auth.signUp()
 
 2. ~~Manually sign HTTP request to AWS API Gateway protected endpoints - using 'aws4'~~
@@ -79,6 +79,7 @@ https://www.cloudspecialist.uk/2017/04/08/How-to-make-custom-IAM-authenticated-r
 $ npm i aws-amplify-vue
 ```
 
-
-4. Remove Express-app and just use simple webpack SPA (with webpak-dev-server or later with 'serve')
-  - needs
+4. Webpack optimizations
+ - Use DotenvPlugin to pass the AWS auth config
+ - Minify the index.html - HtmlWebpackPlugin
+ - Split the AWS Amplify and/or the VueJS 

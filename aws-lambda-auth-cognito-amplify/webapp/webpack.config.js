@@ -3,19 +3,20 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const options = {
     entry: {
         // this is bundle for the Vue/VueMaterial
-        // 'vue': './public-src/vue.js',
+        // 'vue': './src/vue.js',
 
         // this is bundle for the main app
-        'app': './public-src/main.js',
+        'app': './src/main.js',
     },
     output: {
-        path: path.resolve(__dirname, './public/js'),
-        publicPath: '/public/js',
-        filename: 'build.[name].js',
+        path: path.resolve(__dirname, './dist'),
+        // publicPath: '/dist',
+        filename: 'js/build.[name].js',
     },
     module: {
         rules: [
@@ -44,7 +45,7 @@ const options = {
             'vue$': 'vue/dist/vue.esm.js',
 
             // this will make '@' available only in the 'app' folder
-            '@': path.join(__dirname, 'public-src'),
+            '@': path.join(__dirname, 'src'),
         },
         extensions: ['*', '.js', '.vue', '.json',],
     },
@@ -74,9 +75,13 @@ const options = {
         // }),
 
         // extract CSS nad LESS into own files
-        new ExtractTextPlugin({ filename: '../styles/build.[name].css', }),
+        new ExtractTextPlugin({ filename: 'styles/build.[name].css', }),
 
         new VueLoaderPlugin(),
+
+        new HtmlWebpackPlugin({
+            template: './src/index.html',
+        }),
     ],
     devtool: '#eval-source-map',
 };
