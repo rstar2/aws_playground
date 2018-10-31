@@ -1,7 +1,7 @@
 import { Auth } from 'aws-amplify';
 import * as aws4 from 'aws4';
 
-const { region, endpoint } = AWS_AMPLIFY.api;
+const { region, endpoint } = AWS_AMPLIFY_CONFIG.API;
 
 // Note IE don't support "new URL()"
 const { host, pathname } = new URL(endpoint);
@@ -13,15 +13,15 @@ const { host, pathname } = new URL(endpoint);
  */
 export const api = async (path, data) => {
     const opts = {
-        service: "execute-api",
+        service: 'execute-api',
         region,
         host,
-        method: "GET",
+        method: 'GET',
         path: pathname + path,
     };
 
     if (data) {
-        opts.method = "POST";
+        opts.method = 'POST';
         opts.body = JSON.stringify(data);
         opts.headers = {
             'Content-Type': 'application/json; charset=UTF-8',
@@ -48,4 +48,4 @@ export const api = async (path, data) => {
         return res;
     })
         .then(res => res.json());
-}
+};

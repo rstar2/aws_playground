@@ -19,7 +19,7 @@
         "no-var"           : "warn"
     },
     "globals": {
-        "AWS_AMPLIFY": false
+        "AWS_AMPLIFY_CONFIG": false
     }
 }
   

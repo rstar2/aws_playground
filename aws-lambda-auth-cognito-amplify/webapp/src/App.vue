@@ -96,8 +96,8 @@ export default {
 
     doApiWithAmplify(isGET) {
       const api = isGET
-        ? apiAmplify("/test-get")
-        : apiAmplify("/test-post", { a: 1 });
+        ? apiAmplify("/api/test-get")
+        : apiAmplify("/api/test-post", { a: 1 });
       api
         .then(data => (this.info = data.message))
         .catch(() => (this.info = "Failed API Test"));
@@ -106,8 +106,8 @@ export default {
     doApiWithDirectHTTP(isGET) {
       // call the API Gateway with IAM Auth directly (we need to sign the request)
       const api = isGET
-        ? apiHttp("/test-get")
-        : apiHttp("/test-post", { a: 1 });
+        ? apiHttp("/api/test-get")
+        : apiHttp("/api/test-post", { a: 1 });
       api
         .then(data => (this.info = data.message))
         .catch(() => (this.info = "Failed API Test"));

@@ -11,7 +11,7 @@ const options = {
         // 'vue': './src/vue.js',
 
         // this is bundle for the main app
-        'app': './src/main.js',
+        'app': ['./src/main.js'],
     },
     output: {
         path: path.resolve(__dirname, './dist'),
@@ -46,6 +46,8 @@ const options = {
 
             // this will make '@' available only in the 'app' folder
             '@': path.join(__dirname, 'src'),
+
+            'aws-amplify.config.js': path.resolve(__dirname, '../aws-amplify.config.js')  // <-- When you build or restart dev-server, you'll get an error if the path to your utils.js file is incorrect.
         },
         extensions: ['*', '.js', '.vue', '.json',],
     },
@@ -81,6 +83,10 @@ const options = {
 
         new HtmlWebpackPlugin({
             template: './src/index.html',
+        }),
+
+        new webpack.ProvidePlugin({
+            AWS_AMPLIFY_CONFIG: 'aws-amplify.config.js',
         }),
     ],
     devtool: '#eval-source-map',

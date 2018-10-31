@@ -9,7 +9,7 @@
     "client:build": "cd webapp && npm run build",
     "dev": "npm run client:dev",
     "start": "npm run dev",
-    "serve": "npm run client:build && serve webapp/dist --port 8080",
+    "serve": "npm run client:build && http-server webapp/dist --port 8080",
     "deploy": "sls deploy"
   },
   "keywords": [],

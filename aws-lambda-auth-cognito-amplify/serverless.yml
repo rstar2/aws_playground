@@ -1,4 +1,4 @@
-service: my-auth-congnito-amplify
+service: my-auth-cognito-amplify
 
 custom:
   stage: ${opt:stage, 'dev'}
