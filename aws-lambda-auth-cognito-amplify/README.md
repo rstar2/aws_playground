@@ -96,5 +96,5 @@ $ npm i aws-amplify-vue
  - ~~Use DotenvPlugin/WindowGlobalPlugin to pass the AWS_AMPLIFY_CONFIG~~
     Used alias for 'aws-amplify.config.js' to the config file and ProvidePlugin({AWS_AMPLIFY_CONFIG: 'aws-amplify.config.js'})
     https://stackoverflow.com/questions/37656592/define-global-variable-with-webpack
- - Minify the index.html - HtmlWebpackPlugin
+ - ~~Minify the index.html - HtmlWebpackPlugin (in v.4 just setting true is enough, for now it has to be defined explicitly)~~
  - Split the AWS Amplify and/or the VueJS 

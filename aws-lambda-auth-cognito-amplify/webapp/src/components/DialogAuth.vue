@@ -12,7 +12,7 @@
                 <span class="md-error" v-else-if="!$v.user.email.email">Email must be valid email.</span>
             </md-field>
     
-            <md-field v-if="isRegister" :class="validateClass('name')">
+            <md-field v-if="action === ACTIONS.REGISTER" :class="validateClass('name')">
                 <label>Name</label>
                 <md-input v-model="user.name"></md-input>
                 <span class="md-error" v-if="!$v.user.name.required">The name is required</span>
@@ -20,12 +20,18 @@
                     {{$v.user.name.$params.minLength.min}} letters.</span>
             </md-field>
 
-			<md-field :class="validateClass('password')">
+			<md-field v-if="action !== ACTIONS.REGISTER_CONFIRM" :class="validateClass('password')">
                 <label>Password</label>
                 <md-input v-model="user.password" type="password"></md-input>
                 <span class="md-error" v-if="!$v.user.password.required">The password is required</span>
                 <span class="md-error" v-else-if="!$v.user.password.minlength">Password must have at least
                     {{$v.user.password.$params.minLength.min}} letters.</span>
+            </md-field>
+
+            <md-field v-if="action === ACTIONS.REGISTER_CONFIRM" :class="validateClass('code')">
+                <label>Code</label>
+                <md-input v-model="code"></md-input>
+                <span class="md-error" v-if="!$v.code.required">The code is required</span>
             </md-field>
     
             <md-dialog-actions>
@@ -43,10 +49,22 @@
 import { validationMixin } from "vuelidate";
 import { required, minLength, email } from "vuelidate/lib/validators";
 
+export const ACTIONS = {
+  LOGIN: "Login",
+  REGISTER: "Register",
+  REGISTER_CONFIRM: "Confirm"
+};
+
+export const MixinACTIONS = {
+  beforeCreate: function() {
+    this.ACTIONS = ACTIONS;
+  }
+};
+
 export default {
   props: {
     show: { type: Boolean, default: false },
-    isRegister: { type: Boolean, default: false }
+    action: { type: String, default: ACTIONS.LOGIN }
   },
   model: {
     prop: "show",
@@ -54,10 +72,14 @@ export default {
   },
   computed: {
     title() {
-      return this.isRegister ? "Auth register" : "Auth login";
-    },
-    action() {
-      return this.isRegister ? "Sign up" : "Sign in";
+      switch (this.action) {
+        case ACTIONS.LOGIN:
+          return "Log as existing user";
+        case ACTIONS.REGISTER:
+          return "Register as new user";
+        case ACTIONS.REGISTER_CONFIRM:
+          return "Confirm registration";
+      }
     },
     active: {
       // getter
@@ -67,7 +89,7 @@ export default {
       // setter
       set: function(newValue) {
         if (!newValue) {
-          this.$emit("close");
+          this.$emit("close", false);
         }
       }
     },
@@ -82,34 +104,41 @@ export default {
         email: null,
         name: null,
         password: null
-      }
+      },
+      code: null
     };
   },
   methods: {
     doAction() {
       // validate first and if any invalid field then return
-      if (this.isRegister) {
-        this.$v.user;
-      }
       this.$v.user.$touch();
+      this.$v.code.$touch();
 
-      if (this.$v.user.$invalid) {
+      if (this.$v.user.$invalid || this.$v.code.$invalid) {
         // validation errors are shown already when this.$v.user.$touch() is called
         return;
       }
 
       const user = this.user;
+      const code = this.code;
 
       this.user = {};
+      this.code = null;
       this.$v.user.$reset();
+      this.$v.code.$reset();
 
       this.active = false;
 
-      this.$emit("action", user);
+      this.$emit("action", user, code);
     },
 
     validateClass(fieldName) {
-      const field = this.$v.user[fieldName];
+      // serach in global fields (currently just 'code')
+      let field = this.$v[fieldName];
+      if (!field) {
+        // if not found search in 'user' subfields
+        field = this.$v.user[fieldName];
+      }
 
       if (field) {
         return {
@@ -120,8 +149,7 @@ export default {
     }
   },
 
-  // Vuelidate integration
-  mixins: [validationMixin],
+  mixins: [/*Vuelidate integration*/ validationMixin, MixinACTIONS],
 
   // validation schema can be a function
   // which will make it dynamic and possibly dependant on your model's data.
@@ -136,23 +164,33 @@ export default {
         required,
         minLength: minLength(5)
       },
-
       name: {
+        required,
+        minLength: minLength(5)
       }
     };
 
+    let code = { required };
+
     // only for register
-    if (this.isRegister) {
-      Object.assign(user, {
-        name: {
-          required,
-          minLength: minLength(5)
-        }
-      });
+
+    switch (this.action) {
+      case ACTIONS.LOGIN:
+        user.name = {};
+        code = {};
+        break;
+      case ACTIONS.REGISTER:
+        code = {};
+        break;
+      case ACTIONS.REGISTER_CONFIRM:
+        user.password = {};
+        user.name = {};
+        break;
     }
 
     return {
-      user
+      user,
+      code
     };
   }
 };

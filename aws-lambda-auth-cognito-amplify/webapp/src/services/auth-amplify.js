@@ -20,29 +20,46 @@ Amplify.configure({
 /**
  * @param {String} email 
  * @param {String} password 
- * @return {Promise<String>}
+ * @return {Promise<Boolean>}
  */
 export const login = async ({ email, password }) => {
     return Auth.signIn(email, password)
-        .then(data => console.dir(data) || data)
-        .then(({ signInUserSession }) => signInUserSession.idToken.jwtToken)
-        .catch(() => null);
+        .then(/*CognitoUser*/user => console.dir(user) || user)
+        // .then(({ signInUserSession }) => signInUserSession.idToken.jwtToken)
+        // .then(jwtToken => /*it's always valid token if promise is resolved, so this will always return true*/ !!jwtToken)
+        .then(() => true);
+        
 };
 
 /**
  * @param {String} email 
  * @param {String} password 
- * @return {Promise<String>}
+ * @return {Promise<Boolean>}
  */
 export const register = async ({ email, name, password }) => {
-    return Auth.signUp(email, password);
+    return Auth.signUp({
+        username: email,
+        password,
+        attributes: { name }
+    })
+        .then(signUpResult => console.dir(signUpResult) || signUpResult)
+        .then(({ userConfirmed, user }) => userConfirmed && user.signInUserSession);
 };
 
 /**
- * @return {Promise<String>}
+ * @param {String} email 
+ * @param {String} confirmCode 
+ * @return {Promise}
+ */
+export const registerConfirm = async ({ email }, confirmCode) => {
+    return Auth.confirmSignUp(email, confirmCode);
+};
+
+/**
+ * @return {Promise}
  */
 export const logout = async () => {
-    return Auth.signOut().then(() => null);
+    return Auth.signOut();
 };
 
 /**
@@ -51,6 +68,12 @@ export const logout = async () => {
 export const getToken = async () => {
     return Auth.currentAuthenticatedUser()
         .then(data => console.dir(data) || data)
-        .then(({ signInUserSession }) => signInUserSession.idToken.jwtToken)
-        .catch(() => null);
-}
+        .then(({ signInUserSession }) => signInUserSession.idToken.jwtToken);
+};
+
+/**
+ * @return {Promise<Boolean>}
+ */
+export const isAuth = async () => {
+    return getToken().catch(() => null).then(token => !!token);
+};

@@ -14,7 +14,7 @@
   "author": "Rumen Neshev <rstardev@abv.bg>",
   "license": "MIT",
   "dependencies": {
-    "aws-amplify": "^1.1.7",
+    "aws-amplify": "^1.1.8",
     "aws4": "^1.8.0",
     "vue": "^2.5.17",
     "vue-material": "^1.0.0-beta-10.2",
@@ -27,7 +27,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-stage-3": "^6.24.1",
     "cross-env": "^5.2.0",
-    "css-loader": "^1.0.0",
+    "css-loader": "^1.0.1",
     "extract-text-webpack-plugin": "^3.0.2",
     "html-webpack-plugin": "^3.2.0",
     "style-loader": "^0.23.1",

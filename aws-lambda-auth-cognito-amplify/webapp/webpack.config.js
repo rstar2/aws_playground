@@ -83,6 +83,17 @@ const options = {
 
         new HtmlWebpackPlugin({
             template: './src/index.html',
+            // in html-webpack-plugin version 4 using minify:true will actually pass these minification options,
+            //but for not will have to set them explicitly 
+            // minify: true,
+            minify: (process.env.NODE_ENV === 'production') ? {
+                collapseWhitespace: true,
+                removeComments: true,
+                removeRedundantAttributes: true,
+                removeScriptTypeAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                useShortDoctype: true
+              } : false,
         }),
 
         new webpack.ProvidePlugin({
