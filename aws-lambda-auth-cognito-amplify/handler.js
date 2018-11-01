@@ -9,8 +9,8 @@ module.exports.api = async (event, context) => {
 
     // Set response headers to enable CORS (Cross-Origin Resource Sharing)
     const headers = {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": true,
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
         // "Access-Control-Request-Headers": "*"
     };
 
@@ -27,7 +27,7 @@ module.exports.api = async (event, context) => {
 
 /**
  * Finding the User Pool User Id
- * @param {Object} event 
+ * @param {Object} event
  */
 const getUserPoolUserId = (event) => {
     // However, you might find yourself looking for a user’s User Pool user id in your Lambda function.

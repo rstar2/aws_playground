@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
         "Cognito"
-    ]
+    ],
+    "vetur.format.defaultFormatter.js": "vscode-typescript"
 }

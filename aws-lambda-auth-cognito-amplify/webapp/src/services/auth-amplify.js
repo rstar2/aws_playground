@@ -28,7 +28,7 @@ export const login = async ({ email, password }) => {
         // .then(({ signInUserSession }) => signInUserSession.idToken.jwtToken)
         // .then(jwtToken => /*it's always valid token if promise is resolved, so this will always return true*/ !!jwtToken)
         .then(() => true);
-        
+
 };
 
 /**

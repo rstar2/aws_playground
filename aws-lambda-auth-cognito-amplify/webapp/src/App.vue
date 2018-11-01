@@ -19,7 +19,7 @@
         <md-button @click="doApiWithAmplify(false)" class="md-primary md-raised">API POST (Amplify)</md-button>
 		<md-button @click="doApiWithDirectHTTP(true)" class="md-secondary md-raised">API GET (direct HTTP)</md-button>
 		<md-button @click="doApiWithDirectHTTP(false)" class="md-secondary md-raised">API POST (direct HTTP)</md-button>
-    
+
         <app-dialog-auth v-model="dialogAuth.show" :action="dialogAuth.action" @action="doAuth"></app-dialog-auth>
 
         <app-notifications v-model="info"></app-notifications>
@@ -36,101 +36,102 @@ import DialogAuth, { ACTIONS, MixinACTIONS } from "./components/DialogAuth";
 import Notifications from "./components/Notifications";
 
 export default {
-  mixins: [MixinACTIONS], // add this mixin in order to be able to access 'ACTIONS' in the tempate
-  components: {
-    "app-dialog-auth": DialogAuth,
-    "app-notifications": Notifications
-  },
-  data() {
-    return {
-      // describes the current list
-      // describes the notification result info to show (e.g. result of the API call)
-      info: null,
-
-      auth: false,
-
-      dialogAuth: {
-        show: false,
-        action: ACTIONS.LOGIN
-      }
-    };
-  },
-  mounted() {
-    // TODO:  Listen to authorization changes - e.g. when the authorizaton expires or etc...
-    auth.isAuth().then(isAuth => (this.auth = isAuth));
-  },
-  methods: {
-    showAuth(action) {
-      this.dialogAuth.action = action;
-      this.dialogAuth.show = true;
+    mixins: [MixinACTIONS], // add this mixin in order to be able to access 'ACTIONS' in the tempate
+    components: {
+        "app-dialog-auth": DialogAuth,
+        "app-notifications": Notifications
     },
+    data() {
+        return {
+            // describes the current list
+            // describes the notification result info to show (e.g. result of the API call)
+            info: null,
 
-    doLogout() {
-      auth.logout().then(() => (this.auth = false));
+            auth: false,
+
+            dialogAuth: {
+                show: false,
+                action: ACTIONS.LOGIN
+            },
+        };
     },
-    doAuth(user, confirmCode) {
-      const action = this.dialogAuth.action;
+    mounted() {
+        // TODO:  Listen to authorization changes - e.g. when the authorizaton expires or etc...
+        auth.isAuth().then(isAuth => (this.auth = isAuth));
+    },
+    methods: {
+        showAuth(action) {
+            this.dialogAuth.action = action;
+            this.dialogAuth.show = true;
+        },
 
-      let authAction;
-      switch (action) {
-        case ACTIONS.LOGIN:
-          authAction = auth.login(user).then(isAuth => (this.auth = true));
-          break;
-        case ACTIONS.REGISTER:
-          authAction = auth.register(user).then(isAuth => {
-            if (isAuth) {
-              this.auth = true;
-            } else {
-              // show confirm dialog if verification is configured to be with 'CODE' (received either on phone or email)
-              this.showAuth(ACTIONS.REGISTER_CONFIRM);
+        doLogout() {
+            auth.logout().then(() => (this.auth = false));
+        },
+        doAuth(user, confirmCode) {
+            const action = this.dialogAuth.action;
+
+            let authAction;
+            switch (action) {
+                case ACTIONS.LOGIN:
+                    authAction = auth.login(user).then(isAuth => (this.auth = true));
+                    break;
+                case ACTIONS.REGISTER:
+                    authAction = auth.register(user).then(isAuth => {
+                        if (isAuth) {
+                            this.auth = true;
+                        } else {
+                            // show confirm dialog if verification is configured to be with 'CODE' (received either on phone or email)
+                            this.showAuth(ACTIONS.REGISTER_CONFIRM);
+                        }
+                    });
+                    break;
+                case ACTIONS.REGISTER_CONFIRM:
+                    authAction = auth
+                        .registerConfirm(user, confirmCode)
+                        .then(() => auth.login(user))
+                        .then(isAuth => (this.auth = true));
+                    break;
             }
-          });
-          break;
-        case ACTIONS.REGISTER_CONFIRM:
-          authAction = auth.registerConfirm(user, confirmCode)
-              .then(() => auth.login(user))
-              .then(isAuth => (this.auth = true));
-          break;
-      }
 
-      authAction.then(() => (this.info = this.getInfo(action))).catch(data => {
-        // error response must be of the form { error: 'xxxxx' }
-        this.info = (data && data.error) || this.getInfo(action, true);
-      });
-    },
+            authAction.then(() => (this.info = this.getInfo(action))).catch(data => {
+                // error response must be of the form { error: 'xxxxx' }
+                this.info = (data && data.error) || this.getInfo(action, true);
+            });
+        },
 
-    getInfo(action, isFailed) {
-      switch (action) {
-        case ACTIONS.LOGIN:
-          return isFailed ? "Failed to login" : "Logged in";
-        case ACTIONS.REGISTER:
-          return isFailed ? "Failed to register" : "Registered";
-        case ACTIONS.REGISTER_CONFIRM:
-          return isFailed
-            ? "Failed to confirm register"
-            : "Confirmed registration";
-      }
-    },
+        getInfo(action, isFailed) {
+            switch (action) {
+                case ACTIONS.LOGIN:
+                    return isFailed ? "Failed to login" : "Logged in";
+                case ACTIONS.REGISTER:
+                    return isFailed ? "Failed to register" : "Registered";
+                case ACTIONS.REGISTER_CONFIRM:
+                    return isFailed
+                        ? "Failed to confirm register"
+                        : "Confirmed registration";
+            }
+        },
 
-    doApiWithAmplify(isGET) {
-      const api = isGET
-        ? apiAmplify("/api/test-get")
-        : apiAmplify("/api/test-post", { a: 1 });
-      api
-        .then(data => (this.info = data.message))
-        .catch(() => (this.info = "Failed API Test"));
-    },
+        doApiWithAmplify(isGET) {
+            const api = isGET
+                ? apiAmplify("/api/test-get")
+                : apiAmplify("/api/test-post", { a: 1 });
+            api
+                .then(data => (this.info = data.message))
+                .catch(() => (this.info = "Failed API Test"));
+        },
 
-    doApiWithDirectHTTP(isGET) {
-      // call the API Gateway with IAM Auth directly (we need to sign the request)
-      const api = isGET
-        ? apiHttp("/api/test-get")
-        : apiHttp("/api/test-post", { a: 1 });
-      api
-        .then(data => (this.info = data.message))
-        .catch(() => (this.info = "Failed API Test"));
+        doApiWithDirectHTTP(isGET) {
+            // call the API Gateway with IAM Auth directly (we need to sign the request)
+            const api = isGET
+                ? apiHttp("/api/test-get")
+                : apiHttp("/api/test-post", { a: 1 });
+            api
+                .then(data => (this.info = data.message))
+                .catch(() => (this.info = "Failed API Test"));
+        }
     }
-  }
 };
 </script>
 

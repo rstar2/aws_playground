@@ -1,0 +1,22 @@
+{
+  "env": {
+      "es6": true
+  },
+  "parserOptions": {
+      "ecmaVersion": 2017,
+      "ecmaFeatures": {
+          "experimentalObjectRestSpread": true
+      }
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+      "consistent-return":"error",
+      "indent"           : ["warn", 4,  { "SwitchCase": 1 }],
+      "semi"             : ["warn", "always"],
+      "quotes"           : ["error", "single"],
+      "no-else-return"   : "warn",
+      "space-unary-ops"  :"error",
+      "no-console"       : "off",
+      "no-var"           : "warn"
+  }
+}
