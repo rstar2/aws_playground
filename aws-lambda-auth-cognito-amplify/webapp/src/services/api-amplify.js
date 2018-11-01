@@ -4,7 +4,7 @@ import { API } from 'aws-amplify';
 import { API_NAME } from './auth-amplify';
 
 /**
- * @param {String} path 
+ * @param {String} path
  * @param {Object} [data]
  * @return {Promise}
  */
@@ -18,5 +18,5 @@ export const api = (path, data) => {
         // GET request
         return API.get(API_NAME, path);
     }
-}
+};
 
