@@ -67,10 +67,14 @@ $ npx apig-test --username sls@test.com --password Passw0rd! --user-pool-id eu-c
 
 ## Lambda handler
 
-1. Get the authenticated user's info from the UserPool
+1. ~~Get the authenticated user's info in the UserPool from the protected Lambda~~
+    - Add Allowed policy for the Lambda to access the User Pool (e.g. "cognito-idp:AdminGetUser")
+    - The call in the Lambda n"AWS.CognitoIdentityServiceProvider().adminGetUser(userPoolId, userId)",
+      as before that get userPoolId and userId from the authorized cognito identity in the event's requestContext.
+      Note the 'accessKey' inside is the temporary IAM user's access key - not useful in this case.
 
 ## Webapp
-1. ~~Finish Register (e.g. Auth.signUp() and Auth.confirmSignUp() )
+1. ~~Finish Register (e.g. Auth.signUp() and Auth.confirmSignUp() )~~
 
 2. ~~Manually sign HTTP request to AWS API Gateway protected endpoints - using 'aws4'~~
 

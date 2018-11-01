@@ -1,9 +1,27 @@
+const AWS = require('aws-sdk');
+const cognito = new AWS.CognitoIdentityServiceProvider();
+
 module.exports.api = async (event, context) => {
     // this Lambda with HTTP gateway is secured with 'authorizer: aws_iam'
     // this is the Federated Identity id (e.g. the id of the user inside the Cognito Federated Pool)
     // after the user has been authenticated via the Cognito User Pool
-    const identityId = event.requestContext.identity.cognitoIdentityId;
-    const userId = getUserPoolUserId(event);
+
+    // const identityId = event.requestContext.identity.cognitoIdentityId;
+    const { userPoolId, userId } = getUserPoolUserId(event);
+    const user = await getUser(userPoolId, userId);
+    // {
+    //     Enabled: true,
+    //     UserAttributes: [
+    //         { Name: "sub", Value: "should be like userId, but userId is not guaranteed to be unique" },
+    //         {Name: "email_verified", Value: "false"},
+    //         {Name: "name", Value: "Tester"},
+    //         {Name: "email", Value: "test@test.com"}
+    //     ],
+    //     UserCreateDate: "2018-11-01T18:46:54.701Z",
+    //     UserLastModifiedDate: "2018-11-01T18:47:34.967Z",
+    //     UserStatus: "CONFIRMED",
+    //     Username: "userId",
+    // }
 
     console.log(`Authenticated user cognito identity: ${userId}`);
 
@@ -21,13 +39,28 @@ module.exports.api = async (event, context) => {
             message: `Authenticated user '${userId}'`,
             event,
             context,
+            user,
         }),
     };
 };
 
 /**
- * Finding the User Pool User Id
- * @param {Object} event
+ *
+ * @param {String} userPoolId
+ * @param {String} username
+ * @return {Promise}
+ */
+const getUser = async (userPoolId, username) => {
+    const params = {
+        UserPoolId: userPoolId,
+        Username: username,
+    };
+    return cognito.adminGetUser(params).promise();
+};
+
+/**
+ * Finding the User Pool Id and the User Id (e.g. the id inside this pools)
+ * @param {{userPoolId: String, userId: String}} event
  */
 const getUserPoolUserId = (event) => {
     // However, you might find yourself looking for a user’s User Pool user id in your Lambda function.
@@ -56,7 +89,7 @@ const getUserPoolUserId = (event) => {
     const userPoolIdParts = parts[parts.length - 3].split('/');
 
     const userPoolId = userPoolIdParts[userPoolIdParts.length - 1];
-    const userPoolUserId = parts[parts.length - 1];
+    const userId = parts[parts.length - 1];
 
-    return userPoolUserId;
+    return { userPoolId, userId };
 }

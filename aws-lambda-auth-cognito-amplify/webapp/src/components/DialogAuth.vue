@@ -111,8 +111,6 @@ export default {
     },
     watch: {
         userShow(userShow) {
-            console.log('Show user');
-            console.log(userShow);
             if (userShow) {
                 this.user = { ...userShow };
             } else {

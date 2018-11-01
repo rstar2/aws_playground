@@ -30,6 +30,15 @@ provider:
   stage: ${self:custom.stage}
   region: eu-central-1
 
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - cognito-idp:AdminGetUser
+      Resource:
+        - "Fn::GetAtt": [ MyUserPool, Arn ]
+
+
+
 functions:
   - api:
       handler: handler.api
@@ -39,7 +48,7 @@ functions:
             method: ANY
             cors: true
             authorizer: aws_iam
-      
+
 resources:
   # Cognito
   # https://www.tonytruong.net/serverless-framework-authentication-and-logging-with-aws-cognito/
