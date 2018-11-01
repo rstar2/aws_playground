@@ -20,7 +20,7 @@
 		<md-button @click="doApiWithDirectHTTP(true)" class="md-secondary md-raised">API GET (direct HTTP)</md-button>
 		<md-button @click="doApiWithDirectHTTP(false)" class="md-secondary md-raised">API POST (direct HTTP)</md-button>
 
-        <app-dialog-auth v-model="dialogAuth.show" :action="dialogAuth.action" @action="doAuth"></app-dialog-auth>
+        <app-dialog-auth v-model="dialogAuth.show" :action="dialogAuth.action" :userShow="dialogAuth.user" @action="doAuth"></app-dialog-auth>
 
         <app-notifications v-model="info"></app-notifications>
     </div>
@@ -51,7 +51,8 @@ export default {
 
             dialogAuth: {
                 show: false,
-                action: ACTIONS.LOGIN
+                action: ACTIONS.LOGIN,
+                user: {}
             },
         };
     },
@@ -69,6 +70,8 @@ export default {
             auth.logout().then(() => (this.auth = false));
         },
         doAuth(user, confirmCode) {
+            this.dialogAuth.user = user;
+
             const action = this.dialogAuth.action;
 
             let authAction;

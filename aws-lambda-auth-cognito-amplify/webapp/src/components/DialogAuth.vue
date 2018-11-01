@@ -64,7 +64,8 @@ export const MixinACTIONS = {
 export default {
     props: {
         show: { type: Boolean, default: false },
-        action: { type: String, default: ACTIONS.LOGIN }
+        action: { type: String, default: ACTIONS.LOGIN },
+        userShow: { type: Object, default: null }
     },
     model: {
         prop: "show",
@@ -101,12 +102,23 @@ export default {
     data() {
         return {
             user: {
-                email: null,
-                name: null,
-                password: null
+                // email: null,
+                // name: null,
+                // password: null
             },
             code: null
         };
+    },
+    watch: {
+        userShow(userShow) {
+            console.log('Show user');
+            console.log(userShow);
+            if (userShow) {
+                this.user = { ...userShow };
+            } else {
+                this.user = {};
+            }
+        }
     },
     methods: {
         doAction() {
@@ -119,17 +131,14 @@ export default {
                 return;
             }
 
-            const user = this.user;
-            const code = this.code;
-
-            this.user = {};
-            this.code = null;
             this.$v.user.$reset();
             this.$v.code.$reset();
 
             this.active = false;
 
-            this.$emit("action", user, code);
+            this.$emit("action", { ...this.user }, this.code);
+            this.user = {};
+            this.code = null;
         },
 
         validateClass(fieldName) {

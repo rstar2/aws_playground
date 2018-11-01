@@ -18,13 +18,13 @@ Amplify.configure({
 
 
 /**
- * @param {String} email 
- * @param {String} password 
+ * @param {String} email
+ * @param {String} password
  * @return {Promise<Boolean>}
  */
 export const login = async ({ email, password }) => {
     return Auth.signIn(email, password)
-        .then(/*CognitoUser*/user => console.dir(user) || user)
+        // .then(/*CognitoUser*/user => console.dir(user) || user)
         // .then(({ signInUserSession }) => signInUserSession.idToken.jwtToken)
         // .then(jwtToken => /*it's always valid token if promise is resolved, so this will always return true*/ !!jwtToken)
         .then(() => true);
@@ -32,8 +32,8 @@ export const login = async ({ email, password }) => {
 };
 
 /**
- * @param {String} email 
- * @param {String} password 
+ * @param {String} email
+ * @param {String} password
  * @return {Promise<Boolean>}
  */
 export const register = async ({ email, name, password }) => {
@@ -42,13 +42,13 @@ export const register = async ({ email, name, password }) => {
         password,
         attributes: { name }
     })
-        .then(signUpResult => console.dir(signUpResult) || signUpResult)
+        // .then(signUpResult => console.dir(signUpResult) || signUpResult)
         .then(({ userConfirmed, user }) => userConfirmed && user.signInUserSession);
 };
 
 /**
- * @param {String} email 
- * @param {String} confirmCode 
+ * @param {String} email
+ * @param {String} confirmCode
  * @return {Promise}
  */
 export const registerConfirm = async ({ email }, confirmCode) => {
@@ -67,7 +67,7 @@ export const logout = async () => {
  */
 export const getToken = async () => {
     return Auth.currentAuthenticatedUser()
-        .then(data => console.dir(data) || data)
+        // .then(/*CognitoUser*/user => console.dir(user) || user)
         .then(({ signInUserSession }) => signInUserSession.idToken.jwtToken);
 };
 
