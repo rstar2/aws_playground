@@ -18,31 +18,32 @@ custom:
     - bucketName: ${self:custom.websiteName}
       localDir: website
 
-# The `provider` block defines where your service will be deployed
+plugins:
+  - serverless-s3-sync
+
 provider:
   name: aws
   profile: serverless-cli
   runtime: nodejs8.10
 
-plugins:
-  - serverless-s3-sync
 resources:
   Resources:
     # the S3 bucket to host the static contents
-    Website:
+    WebsiteS3Bucket:
       Type: AWS::S3::Bucket
       Properties:
         AccessControl: PublicRead
         BucketName: ${self:custom.websiteName}
         WebsiteConfiguration:
           IndexDocument: index.html
+          ErrorDocument: index.html
 
-    # the permissive policy for the previous bucket
+    # the permissive policy for the previous S3 bucket
     WebsiteS3BucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
         Bucket:
-          Ref: Website
+          Ref: WebsiteS3Bucket
         PolicyDocument:
           Statement:
             - Sid: PublicReadGetObject
@@ -50,16 +51,85 @@ resources:
               Principal: "*"
               Action:
                 - s3:GetObject
-              Resource:
-                Fn::Join: [
-                  "", [
-                    "arn:aws:s3:::",
-                    {
-                      "Ref": "Website"
-                    },
-                    "/*"
-                  ]
-                ]
+              Resource: arn:aws:s3:::${self:custom.websiteName}/* # creating S3 ARN is :arn:aws:s3:::${bucketName}/*
+              # Resource:
+              #   Fn::Join: [
+              #     "", [
+              #       "arn:aws:s3:::",
+              #       {
+              #         "Ref": "Website"
+              #       },
+              #       "/*"
+              #     ]
+              #   ]
+
+    # CDN - Cloudfront distribution, which wraps the API Gateway, and the S3 bucket, as different origins
+    WebsiteCloudFrontDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Enabled: true
+          HttpVersion: http2
+
+          ## The certificate to use when viewers use HTTPS to request objects.
+          ViewerCertificate:
+            CloudFrontDefaultCertificate: 'true'
+
+          # TODO: add aliases
+          # Aliases: ${file(./config.js):${opt:stage}.DOMAIN_ALIASES}
+          # Aliases : [ "mysite.example.com", "yoursite.example.com" ],
+
+          DefaultRootObject: index.html
+
+          ## Since the Single Page App is taking care of the routing we need to make sure ever path is served with index.html
+          ## The only exception are files that actually exist e.h. app.js, reset.css
+          CustomErrorResponses:
+            - ErrorCode: 404
+              ResponseCode: 200
+              ResponsePagePath: /index.html
+
+          Origins:
+            - DomainName: ${self:custom.websiteName}.s3.amazonaws.com
+              ## An identifier for the origin which must be unique within the distribution
+              Id: WebsiteOrigin
+              CustomOriginConfig:
+                HTTPPort: 80
+                HTTPSPort: 443
+                OriginProtocolPolicy: http-only
+              ## In case you want to restrict the bucket access use S3OriginConfig and remove CustomOriginConfig
+              # S3OriginConfig:
+              #   OriginAccessIdentity: origin-access-identity/cloudfront/E127EXAMPLE51Z
+
+          DefaultCacheBehavior:
+            ## The protocol that users can use to access the files in the origin. To allow HTTP use `allow-all`
+            ViewerProtocolPolicy: allow-all
+            # ViewerProtocolPolicy: https-only
+            # ViewerProtocolPolicy: redirect-to-https
+            ## The origin id defined above
+            TargetOriginId: WebsiteOrigin
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+              - DELETE
+              - PATCH
+              - POST
+              - PUT
+            Compress: true
+            DefaultTTL: 30
+            MinTTL: 10
+            ## Defining if and how the QueryString and Cookies are forwarded to the origin which in this case is S3
+            ForwardedValues:
+              QueryString: true
+              Cookies:
+                # Forward: none
+                Forward: all
+
+          ## Uncomment the following section in case you want to enable logging for CloudFront requests
+          # Logging:
+          #   IncludeCookies: 'false'
+          #   Bucket: mylogs.s3.amazonaws.com
+          #   Prefix: myprefix
 
     # a DNS record for the website
     # DnsRecord:
@@ -73,11 +143,17 @@ resources:
     #       Ref: Website
     #     Type: 'A'
 
-  # Print out the name of the website bucket
+  # Print out:
+  # 1. the name of the website S3 Bucket,
+  # 1. the origin ('AWS::Region' is a AWS prop)
   Outputs:
     WebsiteName:
       Value:
-        Ref: Website
+        Ref: WebsiteS3Bucket
+
+    WebAppCloudFrontDistributionOutput:
+      Value:
+        'Fn::GetAtt': [ WebsiteCloudFrontDistribution, DomainName ]
 
     Region:
       Value: { "Fn::Join": [ '', [ Ref: AWS::Region] ] }

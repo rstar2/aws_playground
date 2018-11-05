@@ -98,15 +98,35 @@ functions:
     events:
       - http:
           path: execute/async
-          method: GET    
+          method: GET
 
 # you can add CloudFormation resource templates here
-# resources:
-#   Resources:
-#     myDemoSimpleBucket:
-#       Type: AWS::S3::Bucket
-#       Properties:
-#         BucketName: ${self:service}-${self:provider.stage}-data
+resources:
+  Resources:
+    CloudFrontDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Comment: My first CloudFront Distribution
+          DefaultCacheBehavior:
+            TargetOriginId: MyFirstOrigin
+            ViewerProtocolPolicy: 'redirect-to-https'
+            DefaultTTL: 30
+            ForwardedValues:
+              QueryString: false
+          Enabled: true
+          Origins:
+            - Id: MyFirstOrigin
+              DomainName:
+                Fn::Join:
+                  - "."
+                  - - Ref: ApiGatewayRestApi
+                    - execute-api.${self:provider.region}.amazonaws.com
+              OriginPath: /${self:provider.stage}
+              CustomOriginConfig:
+                HTTPPort: 80
+                HTTPSPort: 443
+                OriginProtocolPolicy: https-only
 #   Outputs:
 #     NewOutput:
 #       Description: "Description for the output"

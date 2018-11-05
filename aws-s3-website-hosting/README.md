@@ -21,10 +21,10 @@ The template 'hello-world' is irrelevant it's not gonna be a Lambda function - s
   - The WebsiteConfiguration is where we define the 'index.html' for the site
   - Typically, you don’t need to name a bucket because the CloudFormation
    generated bucket name will do but that is not the case here,
-   but it will be user in configuring the AWS::Route53, so name it.
+   but it will be used in configuring the AWS::Route53, so name it.
    (For the Route53 Alias record the S3 bucket name and DNS record name)
   - Grant access to the static content, we attach a permissive bucket policy
-    - add access-controll -> AccessControl: PublicRead
+    - add access-control -> AccessControl: PublicRead
     - add proper bucket policy -> WebsiteS3BucketPolicy ...
 
 3. Use 'serverless-s3-sync' plugin
@@ -36,9 +36,15 @@ $ sls plugin install -n serverless-s3-sync
     - the bucket name where to sync
     - the local folder to sync (./website in this case)
 
-4. Configure Route53 Record
+4. Configure CloudFront to serve it out globally and to also that would let us handle SSL certs
+https://medium.com/yld-engineering-blog/caching-in-with-cloudfront-using-serverless-5a174651ab14
+https://github.com/serverless/examples/blob/master/aws-node-single-page-app-via-cloudfront/serverless.yml
+https://forum.serverless.com/t/cloudfront-distribution/2027/2
+https://gist.github.com/TimCoates/13b1ae454154425f7afc421707db2f86
 
-5. Configure CloudFront that would let us handle SSL certs
+
+5. Configure Route53 Record
+TODO:
 
 6. Add a form page - sending emails and etc...
   https://www.serverlessops.io/blog/serverless-contact-form-for-static-websites
@@ -57,7 +63,9 @@ $ sls info -v
 ```
 Stack Outputs:
 WebsiteName: mladost.life
+WebAppCloudFrontDistributionOutput: dkn86cjfasi4h.cloudfront.net
 Region: us-east-1
+ServerlessDeploymentBucketName: my-ru-mladostlife-dev-serverlessdeploymentbucket-1uye29urqy82r
 
 So: http://mladost.life.s3-website-us-east-1.amazonaws.com
 
