@@ -1,0 +1,83 @@
+# Welcome to serverless. Read the docs
+# https://serverless.com/framework/docs/
+
+# Serverless.yml is the configuration the CLI
+# uses to deploy your code to your provider of choice
+
+# The `service` block is the name of the service
+service: my-ru-mladostlife
+
+custom:
+  websiteName: mladost.life
+  hostedZoneName: serverless-zombo.com
+  aliasHostedZoneId: Z3AQBSTGFYJSTF    # us-east-1
+  aliasDNSName: s3-website-us-east-1.amazonaws.com
+
+  # confige the serverless-s3-sync
+  s3Sync:
+    - bucketName: ${self:custom.websiteName}
+      localDir: website
+
+# The `provider` block defines where your service will be deployed
+provider:
+  name: aws
+  profile: serverless-cli
+  runtime: nodejs8.10
+
+plugins:
+  - serverless-s3-sync
+resources:
+  Resources:
+    # the S3 bucket to host the static contents
+    Website:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: PublicRead
+        BucketName: ${self:custom.websiteName}
+        WebsiteConfiguration:
+          IndexDocument: index.html
+
+    # the permissive policy for the previous bucket
+    WebsiteS3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: Website
+        PolicyDocument:
+          Statement:
+            - Sid: PublicReadGetObject
+              Effect: Allow
+              Principal: "*"
+              Action:
+                - s3:GetObject
+              Resource:
+                Fn::Join: [
+                  "", [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "Website"
+                    },
+                    "/*"
+                  ]
+                ]
+
+    # a DNS record for the website
+    # DnsRecord:
+    #   Type: "AWS::Route53::RecordSet"
+    #   Properties:
+    #     AliasTarget:
+    #       DNSName: ${self:custom.aliasDNSName}
+    #       HostedZoneId: ${self:custom.aliasHostedZoneId}
+    #     HostedZoneName: ${self:custom.siteName}.
+    #     Name:
+    #       Ref: Website
+    #     Type: 'A'
+
+  # Print out the name of the website bucket
+  Outputs:
+    WebsiteName:
+      Value:
+        Ref: Website
+
+    Region:
+      Value: { "Fn::Join": [ '', [ Ref: AWS::Region] ] }

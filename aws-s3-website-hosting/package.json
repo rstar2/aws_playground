@@ -1,0 +1,9 @@
+{
+  "name": "my-ru-mladost.life",
+  "description": "",
+  "version": "0.1.0",
+  "dependencies": {},
+  "devDependencies": {
+    "serverless-s3-sync": "^1.7.1"
+  }
+}
