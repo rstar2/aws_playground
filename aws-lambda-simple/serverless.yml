@@ -112,6 +112,15 @@ resources:
             TargetOriginId: MyFirstOrigin
             ViewerProtocolPolicy: 'redirect-to-https'
             DefaultTTL: 30
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+              - DELETE
+              - PATCH
+              - POST
+              - PUT
+            Compress: true
             ForwardedValues:
               QueryString: false
           Enabled: true
@@ -126,6 +135,7 @@ resources:
               CustomOriginConfig:
                 HTTPPort: 80
                 HTTPSPort: 443
+                ## For example, if you select Match Viewer for the Origin Protocol Policy, and if the viewer connects to CloudFront using HTTPS, CloudFront will connect to your origin using HTTPS.
                 OriginProtocolPolicy: https-only
 #   Outputs:
 #     NewOutput:

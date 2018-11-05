@@ -75,9 +75,9 @@ resources:
           ViewerCertificate:
             CloudFrontDefaultCertificate: 'true'
 
-          # TODO: add aliases
-          # Aliases: ${file(./config.js):${opt:stage}.DOMAIN_ALIASES}
-          # Aliases : [ "mysite.example.com", "yoursite.example.com" ],
+          # TODO: add aliases - the CNAMES must be routed in the domain registration hosting (GoDaddy)
+          # Aliases : [ "mysite.example.com", "yoursite.example.com" ]
+          Aliases : [ "www.${self:custom.websiteName}", "${self:custom.websiteName}" ]
 
           DefaultRootObject: index.html
 
@@ -95,16 +95,14 @@ resources:
               CustomOriginConfig:
                 HTTPPort: 80
                 HTTPSPort: 443
-                OriginProtocolPolicy: http-only
+                OriginProtocolPolicy: http-only # http-only | match-viewer | https-only
               ## In case you want to restrict the bucket access use S3OriginConfig and remove CustomOriginConfig
               # S3OriginConfig:
               #   OriginAccessIdentity: origin-access-identity/cloudfront/E127EXAMPLE51Z
 
           DefaultCacheBehavior:
             ## The protocol that users can use to access the files in the origin. To allow HTTP use `allow-all`
-            ViewerProtocolPolicy: allow-all
-            # ViewerProtocolPolicy: https-only
-            # ViewerProtocolPolicy: redirect-to-https
+            ViewerProtocolPolicy: redirect-to-https # allow-all | redirect-to-https | https-only
             ## The origin id defined above
             TargetOriginId: WebsiteOrigin
             AllowedMethods:
