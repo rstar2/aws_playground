@@ -1,9 +1,3 @@
-https://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html
-
-
-https://serverless-stack.com/chapters/deploy-the-frontend.html
-
-
 https://www.serverlessops.io/blog/static-websites-on-aws-s3-with-serverless-framework
 
 
@@ -45,6 +39,8 @@ https://gist.github.com/TimCoates/13b1ae454154425f7afc421707db2f86
 
 5. Configure Route53 Record
 TODO:
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html
+https://github.com/ServerlessOpsIO/serverless-zombo.com/blob/master/serverless.yml
 
 6. Add a form page - sending emails and etc...
   https://www.serverlessops.io/blog/serverless-contact-form-for-static-websites

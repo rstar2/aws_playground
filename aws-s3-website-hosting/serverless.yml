@@ -129,17 +129,21 @@ resources:
           #   Bucket: mylogs.s3.amazonaws.com
           #   Prefix: myprefix
 
-    # a DNS record for the website
-    # DnsRecord:
-    #   Type: "AWS::Route53::RecordSet"
-    #   Properties:
-    #     AliasTarget:
-    #       DNSName: ${self:custom.aliasDNSName}
-    #       HostedZoneId: ${self:custom.aliasHostedZoneId}
-    #     HostedZoneName: ${self:custom.siteName}.
-    #     Name:
-    #       Ref: Website
-    #     Type: 'A'
+    # DNS record for the website
+    # TODO:
+    DnsRecord:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        AliasTarget:
+          DNSName: ${self:custom.websiteName}
+          ## This is fixed - for S3 bucket zones see https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
+          ## The CloudFront hosted zone ID value is Z2FDTNDATAQYW2.
+          HostedZoneId: Z2FDTNDATAQYW2
+        HostedZoneName: ${self:custom.websiteName}
+        Name:
+          # Ref: WebsiteS3Bucket # this will alias just to the simple S3 bucket bypassing CloudFront in front
+          Ref: WebsiteCloudFrontDistribution
+        Type: 'A'
 
   # Print out:
   # 1. the name of the website S3 Bucket,
