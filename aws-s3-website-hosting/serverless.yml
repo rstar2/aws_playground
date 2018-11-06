@@ -63,6 +63,15 @@ resources:
               #     ]
               #   ]
 
+    # TODO:
+    # WebsiteCertificate:
+    #   Type: AWS::CertificateManager::Certificate
+    #   Properties:
+    #     DomainName: ${self:custom.websiteName}
+    #     DomainValidationOptions:
+    #     - DomainName: ${self:custom.websiteName}
+    #       ValidationDomain: ${self:custom.websiteName}
+
     # CDN - Cloudfront distribution, which wraps the API Gateway, and the S3 bucket, as different origins
     WebsiteCloudFrontDistribution:
       Type: AWS::CloudFront::Distribution
@@ -74,6 +83,13 @@ resources:
           ## The certificate to use when viewers use HTTPS to request objects.
           ViewerCertificate:
             CloudFrontDefaultCertificate: 'true'
+          # TODO:
+          # ViewerCertificate:
+          #   AcmCertificateArn:
+          #     Ref: WebsiteCertificate
+          #   SslSupportMethod: sni-only
+
+
 
           # TODO: add aliases - the CNAMES must be routed in the domain registration hosting (GoDaddy)
           # Aliases : [ "mysite.example.com", "yoursite.example.com" ]
@@ -130,30 +146,35 @@ resources:
           #   Prefix: myprefix
 
     # DNS record for the website
-    # TODO:
     DnsRecord:
       Type: AWS::Route53::RecordSet
       Properties:
         AliasTarget:
-          DNSName: ${self:custom.websiteName}
           ## This is fixed - for S3 bucket zones see https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
           ## The CloudFront hosted zone ID value is Z2FDTNDATAQYW2.
           HostedZoneId: Z2FDTNDATAQYW2
-        HostedZoneName: ${self:custom.websiteName}
-        Name:
-          # Ref: WebsiteS3Bucket # this will alias just to the simple S3 bucket bypassing CloudFront in front
-          Ref: WebsiteCloudFrontDistribution
+          ## target the CloudFront Distribution domain
+          DNSName:
+            'Fn::GetAtt': [ WebsiteCloudFrontDistribution, DomainName ]
+        ## The hosted zone in Route53 - pass either HostedZoneId or HostedZoneName
+        HostedZoneName: ${self:custom.websiteName}.
+        Name: ${self:custom.websiteName}.
         Type: 'A'
 
   # Print out:
   # 1. the name of the website S3 Bucket,
-  # 1. the origin ('AWS::Region' is a AWS prop)
+  # 2. the CloudFront distribution domain
+  # 3. the origin ('AWS::Region' is a AWS prop)
   Outputs:
     WebsiteName:
       Value:
         Ref: WebsiteS3Bucket
 
-    WebAppCloudFrontDistributionOutput:
+    WebsiteS3DomainName:
+      Value: # <bucket-name>.s3-website-<AWS-region>.amazonaws.com
+        "Fn::Join": [ '', [ Ref: WebsiteS3Bucket, ".s3-website-", Ref: AWS::Region, ".amazonaws.com"] ]
+
+    WebsiteCDNDomainName:
       Value:
         'Fn::GetAtt': [ WebsiteCloudFrontDistribution, DomainName ]
 

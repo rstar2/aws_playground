@@ -1,12 +1,8 @@
-https://www.serverlessops.io/blog/static-websites-on-aws-s3-with-serverless-framework
-
-
 # Create serverless project
 ```
 $ sls create -t hello-world -n my-ru-mladost.life
 ```
 The template 'hello-world' is irrelevant it's not gonna be a Lambda function - so delete the handler.js
-
 
 ##. Fix serverless.yml
 1. Delete functions tag
@@ -38,12 +34,13 @@ https://gist.github.com/TimCoates/13b1ae454154425f7afc421707db2f86
 
 
 5. Configure Route53 Record
-TODO:
 https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html
 https://github.com/ServerlessOpsIO/serverless-zombo.com/blob/master/serverless.yml
 
-6. Add a form page - sending emails and etc...
-  https://www.serverlessops.io/blog/serverless-contact-form-for-static-websites
+6. Configure proper SSL Certificate
+TODO:
+If using the site just through CloudFront domain we can use it's SSL Certificate,
+but when a custom domain ("mladost.life") is in front with Route53 it must be set explicitly
 
 ## Deploy
 ```
@@ -58,10 +55,11 @@ In this case:
 $ sls info -v
 ```
 Stack Outputs:
+WebsiteCDNDomainName: dkn86cjfasi4h.cloudfront.net
 WebsiteName: mladost.life
-WebAppCloudFrontDistributionOutput: dkn86cjfasi4h.cloudfront.net
 Region: us-east-1
 ServerlessDeploymentBucketName: my-ru-mladostlife-dev-serverlessdeploymentbucket-1uye29urqy82r
+WebsiteS3DomainName: mladost.life.s3-website-us-east-1.amazonaws.com
 
 So: http://mladost.life.s3-website-us-east-1.amazonaws.com
 
