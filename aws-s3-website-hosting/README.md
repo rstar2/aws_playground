@@ -37,6 +37,12 @@ https://gist.github.com/TimCoates/13b1ae454154425f7afc421707db2f86
 https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html
 https://github.com/ServerlessOpsIO/serverless-zombo.com/blob/master/serverless.yml
 
+After that the NS servers of the created Route53 HostZone have to be set in the domain registrar (e.g. GoDaddy):
+ns-1328.awsdns-38.org.
+ns-485.awsdns-60.com.
+ns-1574.awsdns-04.co.uk.
+ns-824.awsdns-39.net.
+
 6. Configure proper SSL Certificate
 TODO:
 If using the site just through CloudFront domain we can use it's SSL Certificate,

@@ -9,9 +9,6 @@ service: my-ru-mladostlife
 
 custom:
   websiteName: mladost.life
-  hostedZoneName: serverless-zombo.com
-  aliasHostedZoneId: Z3AQBSTGFYJSTF    # us-east-1
-  aliasDNSName: s3-website-us-east-1.amazonaws.com
 
   # confige the serverless-s3-sync
   s3Sync:
@@ -81,8 +78,8 @@ resources:
           HttpVersion: http2
 
           ## The certificate to use when viewers use HTTPS to request objects.
-          ViewerCertificate:
-            CloudFrontDefaultCertificate: 'true'
+          # ViewerCertificate:
+          #   CloudFrontDefaultCertificate: 'true'
           # TODO:
           # ViewerCertificate:
           #   AcmCertificateArn:
@@ -90,8 +87,6 @@ resources:
           #   SslSupportMethod: sni-only
 
 
-
-          # TODO: add aliases - the CNAMES must be routed in the domain registration hosting (GoDaddy)
           # Aliases : [ "mysite.example.com", "yoursite.example.com" ]
           Aliases : [ "www.${self:custom.websiteName}", "${self:custom.websiteName}" ]
 
@@ -106,6 +101,10 @@ resources:
 
           Origins:
             - DomainName: ${self:custom.websiteName}.s3.amazonaws.com
+            - DomainName:
+                Fn::GetAtt:
+                  - WebsiteS3Bucket
+                  - DomainName
               ## An identifier for the origin which must be unique within the distribution
               Id: WebsiteOrigin
               CustomOriginConfig:
@@ -138,14 +137,19 @@ resources:
               Cookies:
                 # Forward: none
                 Forward: all
-
-          ## Uncomment the following section in case you want to enable logging for CloudFront requests
           # Logging:
           #   IncludeCookies: 'false'
           #   Bucket: mylogs.s3.amazonaws.com
           #   Prefix: myprefix
+      DependsOn:
+        - WebsiteS3BucketPolicy
 
-    # DNS record for the website
+    ## DNS records for the website
+    # First a Route53 HostedZone that will host the DNS records
+    DnsHostedZone:
+      Type: "AWS::Route53::HostedZone"
+      Properties:
+        Name: ${self:custom.websiteName}
     DnsRecord:
       Type: AWS::Route53::RecordSet
       Properties:
@@ -158,8 +162,29 @@ resources:
             'Fn::GetAtt': [ WebsiteCloudFrontDistribution, DomainName ]
         ## The hosted zone in Route53 - pass either HostedZoneId or HostedZoneName
         HostedZoneName: ${self:custom.websiteName}.
+        # HostedZoneId:  # the same result as the upper
+        #   Ref: DnsHostedZone
         Name: ${self:custom.websiteName}.
         Type: 'A'
+      DependsOn:
+        - DnsHostedZone
+    DnsRecordWWW:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        AliasTarget:
+          ## The ID of the Route53 HostedZone.
+          HostedZoneId:
+            Ref: DnsHostedZone
+          ## target the main domain inside
+          DNSName: ${self:custom.websiteName}.
+        ## The hosted zone in Route53 - pass either HostedZoneId or HostedZoneName
+        HostedZoneName: ${self:custom.websiteName}.
+        # HostedZoneId:  # the same result as the upper
+        #   Ref: DnsHostedZone
+        Name: www.${self:custom.websiteName}.
+        Type: 'A'
+      DependsOn:
+        - DnsRecord
 
   # Print out:
   # 1. the name of the website S3 Bucket,
@@ -173,6 +198,12 @@ resources:
     WebsiteS3DomainName:
       Value: # <bucket-name>.s3-website-<AWS-region>.amazonaws.com
         "Fn::Join": [ '', [ Ref: WebsiteS3Bucket, ".s3-website-", Ref: AWS::Region, ".amazonaws.com"] ]
+
+    # TODO: see the output, add this or the former
+    WebsiteS3DomainName2:
+      Value: # <bucket-name>.s3-website-<AWS-region>.amazonaws.com
+        'Fn::GetAtt': [ WebsiteS3Bucket, DomainName ]
+
 
     WebsiteCDNDomainName:
       Value:
