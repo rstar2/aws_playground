@@ -4,15 +4,16 @@
 # Serverless.yml is the configuration the CLI
 # uses to deploy your code to your provider of choice
 
-# The `service` block is the name of the service
-service: my-ru-mladostlife
+# The `service` block is the name of the service (no dots allowed in the name)
+service: my-website-mladostlife
 
 custom:
   websiteName: mladost.life
+  websiteBucketName: my-website-${self:custom.websiteName}-${self:provider.stage}
 
   # confige the serverless-s3-sync
   s3Sync:
-    - bucketName: ${self:custom.websiteName}
+    - bucketName: ${self:custom.websiteBucketName}
       localDir: website
 
 plugins:
@@ -30,7 +31,7 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         AccessControl: PublicRead
-        BucketName: ${self:custom.websiteName}
+        BucketName: ${self:custom.websiteBucketName}
         WebsiteConfiguration:
           IndexDocument: index.html
           ErrorDocument: index.html
@@ -48,13 +49,13 @@ resources:
               Principal: "*"
               Action:
                 - s3:GetObject
-              Resource: arn:aws:s3:::${self:custom.websiteName}/* # creating S3 ARN is :arn:aws:s3:::${bucketName}/*
+              Resource: arn:aws:s3:::${self:custom.websiteBucketName}/* # creating S3 ARN is :arn:aws:s3:::${bucketName}/*
               # Resource:
               #   Fn::Join: [
               #     "", [
               #       "arn:aws:s3:::",
               #       {
-              #         "Ref": "Website"
+              #         "Ref": "WebsiteS3Bucket"
               #       },
               #       "/*"
               #     ]
@@ -100,7 +101,7 @@ resources:
               ResponsePagePath: /index.html
 
           Origins:
-            - DomainName: ${self:custom.websiteName}.s3.amazonaws.com
+            # - DomainName: ${self:custom.websiteBucketName}.s3.amazonaws.com
             - DomainName:
                 Fn::GetAtt:
                   - WebsiteS3Bucket
@@ -191,7 +192,7 @@ resources:
   # 2. the CloudFront distribution domain
   # 3. the origin ('AWS::Region' is a AWS prop)
   Outputs:
-    WebsiteName:
+    WebsiteS3BucketName:
       Value:
         Ref: WebsiteS3Bucket
 

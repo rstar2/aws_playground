@@ -1,6 +1,6 @@
 # Create serverless project
 ```
-$ sls create -t hello-world -n my-ru-mladost.life
+$ sls create -t hello-world -n my-website-mladost.life
 ```
 The template 'hello-world' is irrelevant it's not gonna be a Lambda function - so delete the handler.js
 
@@ -61,11 +61,15 @@ In this case:
 $ sls info -v
 ```
 Stack Outputs:
-WebsiteCDNDomainName: dkn86cjfasi4h.cloudfront.net
-WebsiteName: mladost.life
 Region: us-east-1
-ServerlessDeploymentBucketName: my-ru-mladostlife-dev-serverlessdeploymentbucket-1uye29urqy82r
-WebsiteS3DomainName: mladost.life.s3-website-us-east-1.amazonaws.com
+ServerlessDeploymentBucketName: my-website-mladostlife-d-serverlessdeploymentbuck-heynbomerg7m
+WebsiteS3BucketName: my-website-mladost.life-dev
+WebsiteS3DomainName: my-website-mladost.life-dev.s3-website-us-east-1.amazonaws.com
+WebsiteCDNDomainName: d16updcalmmmv3.cloudfront.net
 
-So: http://mladost.life.s3-website-us-east-1.amazonaws.com
+So website should be accessible on:
+- http://my-website-mladost.life-dev.s3-website-us-east-1.amazonaws.com
+- http://dd16updcalmmmv3.cloudfront.net
+- http://mladost.life
+- http://www.mladost.life
 

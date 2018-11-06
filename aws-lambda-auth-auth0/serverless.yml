@@ -1,0 +1,89 @@
+service: my-auth-auth0
+
+custom:
+  # implementing custom authorization
+  authorizer:
+    auth0:
+      ## the name of function
+      name: authorizer
+      type: TOKEN
+      identitySource: method.request.header.Authorization
+      identityValidationExpression: Bearer (.*)
+      resultTtlInSeconds: 1
+
+  # Configuration for the serverless-offline plugin https://github.com/dherault/serverless-offline
+  serverless-offline:
+    host: localhost
+    port: 3000
+    # Adds a prefix to every path, to send your requests to http://localhost:3000/[prefix]/[your_path] instead. E.g. -p dev
+    # prefix: ${self:provider.stage}
+    # Disable the authorizers
+    # noAuth: true
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  profile: serverless-cli
+  runtime: nodejs8.10
+  stage: ${opt:stage, 'dev'}
+  region: eu-central-1
+
+# you can add statements to the Lambda function's IAM Role here
+#  iamRoleStatements:
+#    - Effect: "Allow"
+#      Action:
+#        - "s3:ListBucket"
+#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+#    - Effect: "Allow"
+#      Action:
+#        - "s3:PutObject"
+#      Resource:
+#        Fn::Join:
+#          - ""
+#          - - "arn:aws:s3:::"
+#            - "Ref" : "ServerlessDeploymentBucket"
+#            - "/*"
+
+# you can define service wide environment variables here
+#  environment:
+#    variable1: value1
+
+package:
+  exclude:
+    ## .serverless and package.json are excluded by default
+    # - .serverless/**
+    - node_modules/**
+    - .vscode/**
+    - README.md
+    - package-lock.json
+
+
+functions:
+  - authorizer:
+      handler: handlers.authorizer
+      environment:
+        variable1: value2
+
+  - api:
+      handler: handler.api
+      events:
+        - http:
+            path: api/{any+}
+            method: ANY
+            cors: true
+            authorizer: ${self:custom.authorizer.auth0}
+#    environment:
+#      variable2: value2
+
+#resources:
+#  Resources:
+#    NewResource:
+#      Type: AWS::S3::Bucket
+#      Properties:
+#        BucketName: my-new-bucket
+#  Outputs:
+#     NewOutput:
+#       Description: "Description for the output"
+#       Value: "Some output value"
