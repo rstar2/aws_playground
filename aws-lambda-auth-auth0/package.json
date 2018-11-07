@@ -1,9 +1,9 @@
 {
-  "name": "aws-s3-website-mladost.life",
+  "name": "aws-lambda-auth-auth0",
   "description": "",
   "version": "0.1.0",
   "dependencies": {},
   "devDependencies": {
-    "serverless-s3-sync": "^1.7.1"
+    "serverless-offline": "^3.31.1"
   }
 }

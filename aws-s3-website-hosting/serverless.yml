@@ -200,12 +200,6 @@ resources:
       Value: # <bucket-name>.s3-website-<AWS-region>.amazonaws.com
         "Fn::Join": [ '', [ Ref: WebsiteS3Bucket, ".s3-website-", Ref: AWS::Region, ".amazonaws.com"] ]
 
-    # TODO: see the output, add this or the former
-    WebsiteS3DomainName2:
-      Value: # <bucket-name>.s3-website-<AWS-region>.amazonaws.com
-        'Fn::GetAtt': [ WebsiteS3Bucket, DomainName ]
-
-
     WebsiteCDNDomainName:
       Value:
         'Fn::GetAtt': [ WebsiteCloudFrontDistribution, DomainName ]

@@ -32,12 +32,15 @@ https://github.com/serverless/examples/blob/master/aws-node-single-page-app-via-
 https://forum.serverless.com/t/cloudfront-distribution/2027/2
 https://gist.github.com/TimCoates/13b1ae454154425f7afc421707db2f86
 
+https://blog.h4.nz/2017/01/20/a-cloudformation-custom-resource-for-cloudfront-origin-access-identities-oai/#2-use-a-cloudformation-customresource-to-create-delete-the-originaccessidentity - for usage of S3OriginConfig:OriginAccessIdentity:....
+
 
 5. Configure Route53 Record
 https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html
 https://github.com/ServerlessOpsIO/serverless-zombo.com/blob/master/serverless.yml
 
 After that the NS servers of the created Route53 HostZone have to be set in the domain registrar (e.g. GoDaddy):
+For instance:
 ns-1328.awsdns-38.org.
 ns-485.awsdns-60.com.
 ns-1574.awsdns-04.co.uk.
@@ -62,14 +65,14 @@ $ sls info -v
 ```
 Stack Outputs:
 Region: us-east-1
-ServerlessDeploymentBucketName: my-website-mladostlife-d-serverlessdeploymentbuck-heynbomerg7m
+ServerlessDeploymentBucketName: my-website-mladostlife-d-serverlessdeploymentbuck-1j88d5j7dhe14
 WebsiteS3BucketName: my-website-mladost.life-dev
 WebsiteS3DomainName: my-website-mladost.life-dev.s3-website-us-east-1.amazonaws.com
-WebsiteCDNDomainName: d16updcalmmmv3.cloudfront.net
+WebsiteCDNDomainName: d1mmkrx8b90fl8.cloudfront.net
 
 So website should be accessible on:
 - http://my-website-mladost.life-dev.s3-website-us-east-1.amazonaws.com
-- http://dd16updcalmmmv3.cloudfront.net
-- http://mladost.life
-- http://www.mladost.life
+- http://d1mmkrx8b90fl8.cloudfront.net
+- http://mladost.life      - could take some time (an hour or so) after entering the Route53 NS servers in the domain registrar (e.g. GoDaddy)
+- http://www.mladost.life  - could take some time (an hour or so) after entering the Route53 NS servers in the domain registrar (e.g. GoDaddy)
 

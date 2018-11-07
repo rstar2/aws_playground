@@ -1,5 +1,5 @@
 {
-  "name": "src",
+  "name": "aws-lambda-auth-congnito-amplify-webapp",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
