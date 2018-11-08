@@ -67,5 +67,11 @@ As result the website is also accessible on http://mladostbg.com and  http://www
 2. Add SSL so we would have: https://mladostbg.com and https://www.mladostbg.com
 - In AWS Certificate Manager request a new certificate for 'mladostbg.com' and 'www.mladostbg.com'. Put the needed CNAME records in Route53 - actually thw ACM should make it for us with a click of a button, but manually also can be done. The pending validation status should pass after some time (and be set to 'issued')
 
-- S3 SSL is not possible so we should put CloudFront in front of i. TODO:
+- S3 SSL is not possible so we should put CloudFront in front of it.
+  https://www.youtube.com/results?search_query=aws+s3+ssl+certificate
+  - create a AWS CloudFront Distribution with origin set to the S3 bucket
+  - set the previous AWS certificate to be used for this distribution
+  - point the Route53 A-record set to be alias for the CloudFront distribution and not the S3 bucket
+
+  *NOTE!!! To use an ACM certificate with CloudFront, you must request or import the certificate in the US East (N. Virginia) region.*
 
