@@ -88,7 +88,7 @@ resources:
           #   SslSupportMethod: sni-only
 
 
-          # Aliases : [ "mysite.example.com", "yoursite.example.com" ]
+          # Aliases : [ "mysite.example.com", "yoursite.example.com" ] - CNAMES needed to make it vissible in Route53
           Aliases : [ "www.${self:custom.websiteName}", "${self:custom.websiteName}" ]
 
           DefaultRootObject: index.html

@@ -47,7 +47,7 @@ ns-1574.awsdns-04.co.uk.
 ns-824.awsdns-39.net.
 
 6. Configure proper SSL Certificate
-TODO:
+TODO:  https://www.youtube.com/watch?v=uwgB_sIhIko
 If using the site just through CloudFront domain we can use it's SSL Certificate,
 but when a custom domain ("mladost.life") is in front with Route53 it must be set explicitly
 
