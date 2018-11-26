@@ -51,29 +51,24 @@ provider:
 #    variable1: value1
 
 package:
-  exclude:
-    ## .serverless and package.json are excluded by default
-    # - .serverless/**
+  include:
     - node_modules/**
-    - .vscode/**
-    - README.md
-    - package-lock.json
-
+    - handler.js
 
 functions:
   - authorizer:
-      handler: handlers.authorizer
+      handler: handlers-authorizer.handler
       environment:
         variable1: value2
 
   - api:
-      handler: handler.api
+      handler: handler-api.handler
       events:
         - http:
             path: api/{any+}
             method: ANY
             cors: true
-            authorizer: ${self:custom.authorizer.auth0}
+            # authorizer: ${self:custom.authorizer.auth0}
 #    environment:
 #      variable2: value2
 

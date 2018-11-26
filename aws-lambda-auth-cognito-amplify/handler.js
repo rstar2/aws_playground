@@ -92,4 +92,4 @@ const getUserPoolUserId = (event) => {
     const userId = parts[parts.length - 1];
 
     return { userPoolId, userId };
-}
+};
