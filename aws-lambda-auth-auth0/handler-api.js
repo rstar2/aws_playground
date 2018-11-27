@@ -7,8 +7,8 @@ module.exports.handler = async (event, context) => {
         // "Access-Control-Request-Headers": "*"
     };
 
-    // TODO: get it from the context
-    const userId = 'TODO';
+    // get it from the authorizer context
+    const userId = event.requestContext.authorizer.userId;
 
     return {
         statusCode: 200,

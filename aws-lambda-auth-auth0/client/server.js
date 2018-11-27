@@ -2,6 +2,8 @@ const path = require('path');
 
 const express = require('express');
 
+require('dotenv').config();
+
 const app = express();
 // from Express 4.16 they are back in the core
 app.use(express.urlencoded({ extended: false, }));

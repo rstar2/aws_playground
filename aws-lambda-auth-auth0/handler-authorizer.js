@@ -78,21 +78,11 @@ const generatePolicy = (principalId, effect, resource) => {
 
     // Optional output with custom properties of the String, Number or Boolean type.
     authResponse.context = {
-        'stringKey': 'stringval',
-        'numberKey': 123,
-        'booleanKey': true,
+        'userId': principalId,
     };
     // These keys can be accessed in the backend Lambda function as part of the input event
     // $event.requestContext.authorizer.<key>.
     // BUT their values are stringified, for example, "stringval", "123", or "true", respectively.
 
     return authResponse;
-};
-
-const generateAllow = (principalId, resource) => {
-    return generatePolicy(principalId, EFFECT_ALLOW, resource);
-};
-
-const generateDeny = (principalId, resource) => {
-    return generatePolicy(principalId, EFFECT_DENY, resource);
 };

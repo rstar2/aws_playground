@@ -9,13 +9,18 @@
 </head>
 
 <body>
-    <button id='login'>Login</button>
+    <button id='loginServer'>Login with Auth0 in server</button>
+
+    <!-- TODO: implement -->
+    <button id='loginHosted'>Login with Auth0 hosted page</button>
+    <button id='loginLock'>Login with Auth0 Lock widget</button>
+
     <button id='api'>API auth test</button>
 
     <script>
         (() => {
             let authToken = null;
-            document.getElementById('login').addEventListener('click', () => {
+            document.getElementById('loginServer').addEventListener('click', () => {
                 fetch('/auth/login', {
                     method: 'POST',
                 })
