@@ -57,7 +57,7 @@ package:
 
 functions:
   - authorizer:
-      handler: handlers-authorizer.handler
+      handler: handler-authorizer.handler
       environment:
         variable1: value2
 
@@ -68,7 +68,7 @@ functions:
             path: api/{any+}
             method: ANY
             cors: true
-            # authorizer: ${self:custom.authorizer.auth0}
+            authorizer: ${self:custom.authorizer.auth0}
 #    environment:
 #      variable2: value2
 

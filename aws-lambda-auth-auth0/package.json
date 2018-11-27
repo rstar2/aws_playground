@@ -2,6 +2,10 @@
   "name": "aws-lambda-auth-auth0",
   "description": "",
   "version": "0.1.0",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "npm rundev"
+  },
   "dependencies": {},
   "devDependencies": {
     "serverless-offline": "^3.31.1"

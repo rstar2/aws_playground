@@ -2,7 +2,7 @@
 
 1. Make bucket
 ```
-$ aws s3 md s3://<bucketName> --region <region>
+$ aws s3 mb s3://<bucketName> --region <region>
 ```
 
 2. Make it publicly available - e.g add AccessControlLists 'public-read' permission

@@ -39,23 +39,18 @@ module.exports.handler = async (event, context) => {
 
 };
 
-const jwt = require('../utils/jwt')(process.env.AUTH_JWT_SECRET);
-const dbConnect = require('../lib/db-auth');
-
 /**
  * @param {String} token
  * @param {String} resource
  * @return {Promise}
  */
 const authorizeJWT = (jsonWebToken, resource) => {
-    return jwt.verify(jsonWebToken)
-        .then(id => {
-            if (!id) throw 'No id decoded from the JWT';
-            return id;
-        })
-        .then(id => Promise.all([id, dbConnect(),]))
-        .then(([id, db,]) => db.authorize(id)
-            .then(authorized => generatePolicy(id, authorized ? EFFECT_ALLOW : EFFECT_DENY, resource)));
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve({ id: 'AuthTester', authorized: true })
+        }, 1000);
+    })
+        .then(({ id, authorized }) => generatePolicy(id, authorized ? EFFECT_ALLOW : EFFECT_DENY, resource));
 };
 
 const EFFECT_ALLOW = 'Allow';
