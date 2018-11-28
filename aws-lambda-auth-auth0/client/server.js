@@ -2,7 +2,8 @@ const path = require('path');
 
 const express = require('express');
 
-require('dotenv').config();
+// load the global .env file
+require('dotenv').config({path: path.resolve(__dirname, '../.env')});
 
 const app = express();
 // from Express 4.16 they are back in the core

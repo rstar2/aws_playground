@@ -10,10 +10,16 @@
 
 <body>
     <button id='loginServer'>Login with Auth0 in server</button>
+    <input type="text" id="username">
+    <input type="text" id="password">
+    <hr>
 
     <!-- TODO: implement -->
     <button id='loginHosted'>Login with Auth0 hosted page</button>
+    <hr>
+
     <button id='loginLock'>Login with Auth0 Lock widget</button>
+    <hr>
 
     <button id='api'>API auth test</button>
 
@@ -23,6 +29,13 @@
             document.getElementById('loginServer').addEventListener('click', () => {
                 fetch('/auth/login', {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: document.getElementById('username').value,
+                        password: document.getElementById('password').value,
+                    }),
                 })
                     .then(res => res.json())
                     .then(({ auth, token }) => {

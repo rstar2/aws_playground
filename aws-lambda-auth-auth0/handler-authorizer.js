@@ -39,27 +39,46 @@ module.exports.handler = async (event, context) => {
 
 };
 
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
+const AUTH0_API_JWT_SECRET = process.env.AUTH0_API_JWT_SECRET;
+const AUTH0_API_JWT_ISSUER = process.env.AUTH0_API_JWT_ISSUER;
+const AUTH0_API_JWT_AUDIENCE = process.env.AUTH0_API_JWT_AUDIENCE;
+
 /**
  * @param {String} token
  * @param {String} resource
  * @return {Promise}
  */
 const authorizeJWT = (jsonWebToken, resource) => {
+    // Validating a token means that you are certain you can trust its contents.
     return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve({ id: 'AuthTester', authorized: true })
-        }, 1000);
+        jwt.verify(jsonWebToken, AUTH0_API_JWT_SECRET, {
+            audience: AUTH0_API_JWT_AUDIENCE,
+            issuer: AUTH0_API_JWT_ISSUER,
+        }, (err, decoded) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            console.log(decoded);
+            const userId = decoded.sub; // this is registered standard JWT claim
+            // NOTE: could access the pass email/name/etc... if 'openid' scope is issued
+
+            // NOTE: could play with the 'authorized' for instance if there are issued scopes
+            const authorized = true;
+            resolve({ userId, authorized });
+        });
     })
-        .then(({ id, authorized }) => generatePolicy(id, authorized ? EFFECT_ALLOW : EFFECT_DENY, resource));
+        .then(({ userId, authorized }) => generatePolicy(userId, authorized ? EFFECT_ALLOW : EFFECT_DENY, resource));
 };
 
 const EFFECT_ALLOW = 'Allow';
 const EFFECT_DENY = 'Deny';
 
-const generatePolicy = (principalId, effect, resource) => {
-    const authResponse = {
-        principalId,
-    };
+const generatePolicy = (userId, effect, resource) => {
+    const authResponse = {};
 
     if (effect && resource) {
         const policyDocument = {
@@ -78,7 +97,8 @@ const generatePolicy = (principalId, effect, resource) => {
 
     // Optional output with custom properties of the String, Number or Boolean type.
     authResponse.context = {
-        'userId': principalId,
+        'userId': userId,
+        // NOTE: could pass email/name/etc..
     };
     // These keys can be accessed in the backend Lambda function as part of the input event
     // $event.requestContext.authorizer.<key>.
