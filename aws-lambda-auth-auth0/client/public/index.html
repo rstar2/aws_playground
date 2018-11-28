@@ -14,7 +14,6 @@
     <input type="text" id="password">
     <hr>
 
-    <!-- TODO: implement -->
     <button id='loginHosted'>Login with Auth0 hosted page</button>
     <hr>
 
@@ -24,50 +23,21 @@
     <button id='api'>API auth test</button>
 
     <script>
-        (() => {
-            let authToken = null;
-            document.getElementById('loginServer').addEventListener('click', () => {
-                fetch('/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        username: document.getElementById('username').value,
-                        password: document.getElementById('password').value,
-                    }),
-                })
-                    .then(res => res.json())
-                    .then(({ auth, token }) => {
-                        if (auth) {
-                            authToken = token;
-                            alert('Logged in');
-                        }
-                    });
+        const process.env = {
+            AUTH0_API_JWT_AUDIENCE:;
+            AUTH0_API_APP_DOMAIN:;
+            AUTH0_API_APP_CLIENT_ID:;
 
-            });
-
-
-            const API_AUTHORIZED_URL = 'https://a57997ppt6.execute-api.eu-central-1.amazonaws.com/dev/api';
-            document.getElementById('api').addEventListener('click', () => {
-                fetch(API_AUTHORIZED_URL + '/test', {
-                    headers: (() => {
-                        return authToken ? {
-                            'Authorization': 'Bearer ' + authToken,
-                        } : {};
-                    })(),
-                })
-                    .then(res => res.json())
-                    .then(() => {
-                        alert('Success');
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        alert('Failure: ' + error);
-                    });
-            });
-        })();
+            API_AUTHORIZED_URL: ;
+        }
     </script>
+
+    <script src="js/login-auth0-server.js"></script>
+
+    <script src="js/login-auth0-hosted.js"></script>
+
+    <script src="https://cdn.auth0.com/js/lock/11.0.1/lock.min.js"></script>
+    <script src="js/login-auth0-lock.js"></script>
 
 </body>
 

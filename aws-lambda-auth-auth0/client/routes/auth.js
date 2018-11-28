@@ -9,32 +9,20 @@ module.exports = (app) => {
 
     // https://github.com/auth0-samples/auth0-nodejs-webapp-sample/tree/embedded-login/01-Embedded-Login
     // https://egghead.io/lessons/express-authenticate-users-in-a-single-page-application-with-auth0
-    // https://scotch.io/tutorials/building-and-securing-a-modern-backend-api
 
     // TODO:
-    // app.post('/register', (req, res) => {
-    //     dbConnect()
-    //         .then(db => db.register(req.body))
-    //         .then(user => jwt.sign(user.id))
-    //         .then(token => {
-    //             console.log('Newly registered user');
-    //             res.send({ auth: true, token, });
-    //         })
-    //         .catch(error => {
-    //             console.error(error);
-    //             res.status(500).send({ auth: false, error, });
-    //         });
-
-    // https://blog.cloudboost.io/auth0-expressjs-jwt-and-custom-methods-83c8c3e5e914
-    //     axios.post('https://reliabitaly.eu.auth0.com/dbconnections/signup', {
-    //     client_id: 'xx',
-    //     email: req.body.email,
-    //     password: req.body.password,
-    //     connection: 'Username-Password-Authentication'
-    //   }).then((response) => {
-    //     // here we are! user profile data
-    //   }).catch(error => next(error));
-    // });
+    app.post('/register', (req, res) => {
+        // axios.post('https://reliabitaly.eu.auth0.com/dbconnections/signup', {
+        //     client_id: 'xx',
+        //     email: req.body.email,
+        //     password: req.body.password,
+        //     connection: 'auth0Username-Password-Authentication'
+        // }).then((response) => {
+        //     // here we are! user profile data
+        //     console.log('Newly registered user');
+        //     res.send({ auth: true, token, });
+        // }).catch(error => res.status(500).send({ auth: false, error: '' + error }));
+    });
 
     // Our custom login
     app.post('/login', (req, res) => {
@@ -84,14 +72,24 @@ module.exports = (app) => {
 
     // TODO: this should open the Auth0's hosted login page
     app.get('/login-auth0', (req, res) => {
-        auth0.clientCredentialsGrant({
-            audience: 'https://{YOUR_ACCOUNT}.auth0.com/api/v2/',
-            scope: '{MANAGEMENT_API_SCOPES}'
-        })
-            .then(response => res.status(200).send({ auth: true, token: response.access_token }))
-            .catch(error => res.status(500).send({ auth: false }));
+
+        // GET https://YOUR_AUTH0_DOMAIN/authorize?
+        // response_type=code|token&
+        // client_id=YOUR_CLIENT_ID&
+        // connection=CONNECTION&
+        // redirect_uri=https://YOUR_APP/callback&
+        // state=STATE&
     });
     app.get('/callback', (req, res) => {
 
+    });
+
+
+    // TODO: Authorize on behalf of the client - e.g when we just want to get JWT access token
+    // actual check for user credentials are optional and can be done if necessary
+    // Actually this means that access to the protected API (in this case the AWS Lambda) can be got only from this server
+    // as only it knows the AUTH0_API_APP_CLIENT_ID and AUTH0_API_APP_CLIENT_SECRET with which it can issue a JWT access token
+    app.get('/auth', (req, res) => {
+        // https://scotch.io/tutorials/building-and-securing-a-modern-backend-api
     });
 };
