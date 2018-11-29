@@ -9,35 +9,55 @@
 </head>
 
 <body>
-    <button id='loginServer'>Login with Auth0 in server</button>
+    <button id='loginAuth0_Server'>Login with Auth0 in server</button>
     <input type="text" id="username">
     <input type="text" id="password">
     <hr>
 
-    <button id='loginHosted'>Login with Auth0 hosted page</button>
+    <button id='loginAuth0_LockWidget'>Login with Auth0 Lock widget</button>
     <hr>
 
-    <button id='loginLock'>Login with Auth0 Lock widget</button>
+    <button id='authAuth0_Server'>Auth the server with Auth0</button>
     <hr>
 
     <button id='api'>API auth test</button>
 
     <script>
-        const process.env = {
-            AUTH0_API_JWT_AUDIENCE:;
-            AUTH0_API_APP_DOMAIN:;
-            AUTH0_API_APP_CLIENT_ID:;
+        const process = {
+            env: {
+                AUTH0_API_JWT_AUDIENCE: 'https://a57997ppt6.execute-api.eu-central-1.amazonaws.com/dev/api',
+                AUTH0_API_APP_DOMAIN: 'rstardev.eu.auth0.com',
+                AUTH0_API_APP_CLIENT_ID: 'gl84jPSd51eeHCfGl6e48HGVv15AHPW2',
+                // AUTH0_API_APP_REDIRECT_URL: 'http://localhost:3000/profile',
+                AUTH0_API_APP_REDIRECT_URL: 'http://localhost:3000',
 
-            API_AUTHORIZED_URL: ;
-        }
+                API_AUTHORIZED_URL: 'https://a57997ppt6.execute-api.eu-central-1.amazonaws.com/dev/api',
+            }
+        };
+
+        const AuthApp = {
+            _authToken: null,
+
+            setAuthToken(token) {
+                this._authToken = token;
+                alert('Logged in');
+            },
+
+            getAuthToken() {
+                return this._authToken;
+            }
+        };
+
     </script>
 
     <script src="js/login-auth0-server.js"></script>
 
-    <script src="js/login-auth0-hosted.js"></script>
-
     <script src="https://cdn.auth0.com/js/lock/11.0.1/lock.min.js"></script>
     <script src="js/login-auth0-lock.js"></script>
+
+    <script src="js/auth-auth0-server.js"></script>
+
+    <script src="js/api.js"></script>
 
 </body>
 

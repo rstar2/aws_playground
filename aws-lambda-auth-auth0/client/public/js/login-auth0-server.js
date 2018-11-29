@@ -1,19 +1,6 @@
-const AuthApp = {
-    _authToken: null,
-
-    setAuthToken(token) {
-        this._authToken = token;
-        alert('Logged in');
-    },
-
-    getAuthToken() {
-        return this._authToken;
-    }
-};
-
 (() => {
-    document.getElementById('loginServer').addEventListener('click', () => {
-        fetch('/auth/login-auth0', {
+    document.getElementById('loginAuth0_Server').addEventListener('click', () => {
+        fetch('/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -26,6 +13,7 @@ const AuthApp = {
             .then(res => res.json())
             .then(({ auth, token }) => {
                 if (auth) {
+                    // save our JWT access token
                     AuthApp.setAuthToken(token);
                 }
             });

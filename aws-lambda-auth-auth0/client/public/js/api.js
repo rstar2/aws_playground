@@ -1,5 +1,3 @@
-/* globals AuthApp */
-
 document.getElementById('api').addEventListener('click', () => {
     fetch(process.env.API_AUTHORIZED_URL + '/test', {
         headers: (() => {

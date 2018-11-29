@@ -70,26 +70,12 @@ module.exports = (app) => {
         });
     });
 
-    // TODO: this should open the Auth0's hosted login page
-    app.get('/login-auth0', (req, res) => {
-
-        // GET https://YOUR_AUTH0_DOMAIN/authorize?
-        // response_type=code|token&
-        // client_id=YOUR_CLIENT_ID&
-        // connection=CONNECTION&
-        // redirect_uri=https://YOUR_APP/callback&
-        // state=STATE&
-    });
-    app.get('/callback', (req, res) => {
-
-    });
-
-
     // TODO: Authorize on behalf of the client - e.g when we just want to get JWT access token
     // actual check for user credentials are optional and can be done if necessary
     // Actually this means that access to the protected API (in this case the AWS Lambda) can be got only from this server
     // as only it knows the AUTH0_API_APP_CLIENT_ID and AUTH0_API_APP_CLIENT_SECRET with which it can issue a JWT access token
     app.get('/auth', (req, res) => {
         // https://scotch.io/tutorials/building-and-securing-a-modern-backend-api
+        res.status(200).send({ auth: true, token: "asdasd" });
     });
 };
