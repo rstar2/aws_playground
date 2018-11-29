@@ -8,6 +8,5 @@
                     AuthApp.setAuthToken(token);
                 }
             });
-
     });
 })();
