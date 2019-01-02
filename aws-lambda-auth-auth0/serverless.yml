@@ -30,36 +30,15 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: eu-central-1
 
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
 package:
   include:
     - node_modules/**
-    - handler.js
+    - handler-authorizer.js
+    - handler-api.js
 
 functions:
   - authorizer:
       handler: handler-authorizer.handler
-      environment:
-        variable1: value2
 
   - api:
       handler: handler-api.handler
@@ -69,16 +48,3 @@ functions:
             method: ANY
             cors: true
             authorizer: ${self:custom.authorizer.auth0}
-#    environment:
-#      variable2: value2
-
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
