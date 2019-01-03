@@ -1,0 +1,31 @@
+service: my-gifmaker-lambda
+frameworkVersion: ">=1.34.0 <2.0.0"
+
+custom:
+  bucket: ${self:service}-${self:provider.stage}
+
+provider:
+  name: aws
+  profile: serverless-cli
+  runtime: nodejs8.10
+
+  stage: ${opt:stage, 'dev'}
+  region: eu-central-1
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", "${self:custom.bucket}", '/*' ] ]  }
+
+functions:
+  gifmaker:
+    handler: handler.handle
+    events:
+      # the S3 Bucket will be created if not already, SHOULD NOT be defined in 'resources'
+      - s3: ${self:custom.bucket}
+    layers:
+      # Use the exported AWS Layer from the other CloudFormation stack
+      # the anem of the CloudFormation is 'my-gifmaker-layer-dev' (for dev stage) and it exports 'FfmpegLayerExport'
+      - ${cf:my-gifmaker-layer-${self:provider.stage}.FfmpegLayerExport}
