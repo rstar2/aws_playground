@@ -27,5 +27,5 @@ functions:
       - s3: ${self:custom.bucket}
     layers:
       # Use the exported AWS Layer from the other CloudFormation stack
-      # the anem of the CloudFormation is 'my-gifmaker-layer-dev' (for dev stage) and it exports 'FfmpegLayerExport'
+      # the name of the CloudFormation is 'my-gifmaker-layer-dev' (for dev stage) and it exports 'FfmpegLayerExport'
       - ${cf:my-gifmaker-layer-${self:provider.stage}.FfmpegLayerExport}
