@@ -2,5 +2,10 @@
     "cSpell.words": [
         "Cognito"
     ],
-    "vetur.format.defaultFormatter.js": "vscode-typescript"
+    "vetur.format.defaultFormatter.js": "vscode-typescript",
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#02314B",
+        "titleBar.activeBackground": "#034468",
+        "titleBar.activeForeground": "#F5FBFF"
+    }
 }
