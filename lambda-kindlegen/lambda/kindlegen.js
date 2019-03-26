@@ -21,24 +21,32 @@ const kindlegen = async (record) => {
     const outFilePath = path.join(path.dirname(inFilePath),
         path.basename(inFilePath, path.extname(inFilePath)) + '.mobi');
 
-    console.log('inFilePath:', inFilePath);
-    console.log('outFilePath:', outFilePath);
+    // console.log('inFilePath:', inFilePath);
+    // console.log('outFilePath:', outFilePath);
 
     // write file to disk
     writeFileSync(inFilePath, s3Object.Body);
 
-    console.log('ls /opt:', execSync('ls -la /opt',{ stdio: 'inherit' }));
-    console.log('ls /tmp:', execSync('ls -la /tmp',{ stdio: 'inherit' }));
-
     // convert using KindleGen
-    const child_process = spawnSync(
-        '/opt/kindlegen',
-        [
-            inFilePath,
-        ],
-        { stdio: 'inherit' }
-    );
-    console.log('kindlegen result:', child_process );
+    try {
+        const child_process = spawnSync(
+            '/opt/qemu-i386-static',
+            [
+                '/opt/kindlegen',
+                inFilePath,
+            ],
+            { stdio: 'inherit' }
+        );
+        // const child_process = execSync(
+        //     `/opt/kindlegen ${inFilePath}`,
+        //     { stdio: 'inherit' }
+        // );
+        // console.log('kindlegen result:', child_process );
+
+    } catch (e) {
+        console.error('kindlegen failed', e);
+    }
+    execSync('ls -la /tmp',{ stdio: 'inherit' });
 
     // read 'mobi' from disk
     const mobiFile = readFileSync(outFilePath);
@@ -50,7 +58,6 @@ const kindlegen = async (record) => {
     } catch(e) {
         console.error(e);
     }
-
 
     // upload the 'mobi' file to s3
     await s3

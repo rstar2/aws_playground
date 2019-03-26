@@ -26,6 +26,7 @@ layers:
 functions:
   gifmaker:
     handler: handler.handle
+    timeout: 60 # default is 6 seconds
     events:
       # the S3 Bucket will be created, SHOULD NOT be defined in 'resources'
       - s3: ${self:custom.bucket}
