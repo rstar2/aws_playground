@@ -1,0 +1,51 @@
+{
+  "name": "aws-lambda-nodejs-ts-puppeteer",
+  "version": "1.0.0",
+  "description": "This is scrapper with Puppeteer runnning as a AWS Lambda Nodejs By Serverless framework and built with TypeScript",
+  "keywords": [
+    "Nodejs",
+    "TypeScript",
+    "ServerLess",
+    "MongoDB Atlas",
+    "AWS Lambda"
+  ],
+  "author": "Rumen Neshev",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "local": "serverless offline",
+    "deploy": "serverless deploy",
+    "test": "cross-env NODE_ENV=development jest"
+  },
+  "pre-commit": [
+    "lint"
+  ],
+  "dependencies": {
+    "@serverless-chrome/lambda": "^1.0.0-57.2",
+    "dotenv": "^8.2.0",
+    "mongoose": "^5.11.10",
+    "nodemailer": "^6.4.18",
+    "puppeteer": "^7.1.0",
+    "superagent": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.51",
+    "@types/dotenv-safe": "^8.1.0",
+    "@types/lambda-tester": "^3.6.0",
+    "@types/mongoose": "^5.7.14",
+    "@types/nodemailer": "^6.4.0",
+    "@types/puppeteer": "^5.4.3",
+    "@types/superagent": "^4.1.10",
+    "@types/supertest": "^2.0.8",
+    "chrome-launcher": "^0.13.4",
+    "cross-env": "^7.0.2",
+    "lambda-tester": "^4.0.1",
+    "serverless-offline": "^6.8.0",
+    "serverless-plugin-chrome": "^1.0.0-55.3",
+    "serverless-plugin-typescript": "^1.1.9",
+    "ts-node": "^9.1.1",
+    "tslint": "^6.1.2",
+    "typescript": "^4.1.5"
+  }
+}

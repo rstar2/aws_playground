@@ -1,0 +1,67 @@
+service: aws-lambda-typescript-puppeteer
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  profile: serverless-cli
+
+  stage: dev
+  region: eu-central-1
+
+  environment:
+    NODE_ENV: development
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-plugin-chrome
+  - serverless-offline
+
+package:
+  exclude:
+    # Don't include the Chromium binaries
+    - node_modules/puppeteer/.local-chromium/**
+    - config/.env.production
+  include:
+    - config/.env.development
+
+functions:
+  scrape:
+    handler: app/handler.scrape
+    memorySize: 1536MB
+    timeout: 30
+    events:
+      - http:
+          path: /
+          method: get
+
+  # create:
+  #   handler: app/handler_db.create
+  #   events:
+  #     - http:
+  #         path: books
+  #         method: post
+  # update:
+  #   handler: app/handler_db.update
+  #   events:
+  #     - http:
+  #         path: books/{id}
+  #         method: put
+  # find:
+  #   handler: app/handler_db.find
+  #   events:
+  #     - http:
+  #         path: books
+  #         method: get
+  # findOne:
+  #   handler: app/handler_db.findOne
+  #   events:
+  #     - http:
+  #         path: books/{id}
+  #         method: get
+
+  # deleteOne:
+  #   handler: app/handler_db.deleteOne
+  #   events:
+  #     - http:
+  #         path: books/{id}
+  #         method: delete

@@ -1,0 +1,18 @@
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+
+.build
+
+coverage
+
+package-lock.json
+
+out-logger.json
+
+.DS_Store
+
+config
