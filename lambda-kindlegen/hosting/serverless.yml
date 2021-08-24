@@ -1,0 +1,155 @@
+service: my-kindlegen-hosting
+
+frameworkVersion: ">=1.1.0"
+
+custom:
+  websiteBucketName: ${self:service}-${self:provider.stage}
+
+  # confige the serverless-s3-sync
+  s3Sync:
+    - bucketName: ${self:custom.websiteBucketName}
+      localDir: dist
+
+plugins:
+  - serverless-s3-sync
+
+provider:
+  name: aws
+  profile: serverless-cli
+  stage: ${opt:stage, 'dev'}
+  region: eu-central-1
+
+resources:
+  Resources:
+    # the S3 bucket to host the static contents
+    WebsiteS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: PublicRead
+        BucketName: ${self:custom.websiteBucketName}
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: index.html
+
+    # the permissive policy for the previous S3 bucket
+    WebsiteS3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: WebsiteS3Bucket
+        PolicyDocument:
+          Statement:
+            - Sid: PublicReadGetObject
+              Effect: Allow
+              Principal: "*"
+              Action:
+                - s3:GetObject
+              Resource: arn:aws:s3:::${self:custom.websiteBucketName}/*
+              # Resource:
+              #   Fn::Join: [
+              #     "", [
+              #       "arn:aws:s3:::",
+              #       {
+              #         "Ref": "WebsiteS3Bucket"
+              #       },
+              #       "/*"
+              #     ]
+              #   ]
+
+    # CDN - Cloudfront distribution, which wraps the API Gateway, and the S3 bucket, as different origins
+    # https://gist.github.com/TimCoates/13b1ae454154425f7afc421707db2f86
+    WebsiteCloudFrontDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Enabled: true
+          HttpVersion: http2
+
+          ## The certificate to use when viewers use HTTPS to request objects.
+          ViewerCertificate:
+            CloudFrontDefaultCertificate: 'true'
+
+          # Aliases : [ "mysite.example.com", "yoursite.example.com" ] - CNAMES needed to make it vissible in Route53
+          # Aliases : [ "www.${self:custom.websiteName}", "${self:custom.websiteName}" ]
+
+          DefaultRootObject: index.html
+
+          ## Since the Single Page App is taking care of the routing we need to make sure every path is served with index.html
+          ## The only exception are files that actually exist e.h. app.js, reset.css
+          CustomErrorResponses:
+            - ErrorCode: 404
+              ResponseCode: 200
+              ResponsePagePath: /index.html
+
+          Origins:
+            # - DomainName: ${self:custom.websiteBucketName}.s3.amazonaws.com
+            - DomainName:
+                Fn::GetAtt:
+                  - WebsiteS3Bucket
+                  - DomainName
+              ## An identifier for the origin which must be unique within the distribution
+              Id: WebsiteOrigin
+              CustomOriginConfig:
+                HTTPPort: 80
+                HTTPSPort: 443
+                OriginProtocolPolicy: http-only # http-only | match-viewer | https-only
+              ## In case you want to restrict the bucket access use S3OriginConfig and remove CustomOriginConfig
+              # S3OriginConfig:
+              #   OriginAccessIdentity: origin-access-identity/cloudfront/E127EXAMPLE51Z
+
+          DefaultCacheBehavior:
+            ## The protocol that users can use to access the files in the origin. To allow HTTP use `allow-all`
+            ViewerProtocolPolicy: redirect-to-https # allow-all | redirect-to-https | https-only
+            ## The origin id defined above
+            TargetOriginId: WebsiteOrigin
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+              - DELETE
+              - PATCH
+              - POST
+              - PUT
+            Compress: true
+            DefaultTTL: 30
+            MinTTL: 10
+            ## Defining if and how the QueryString and Cookies are forwarded to the origin which in this case is S3
+            ForwardedValues:
+              QueryString: true
+              Cookies:
+                # Forward: none
+                Forward: all
+          # Logging:
+          #   IncludeCookies: 'false'
+          #   Bucket: mylogs.s3.amazonaws.com
+          #   Prefix: myprefix
+      DependsOn:
+        - WebsiteS3BucketPolicy
+
+
+  # When used ```sls deploy --verbose``` or ```sls info --verbose``` will print the outputs:
+  # 1. the name of the website S3 Bucket,
+  # 2. the CloudFront distribution domain
+  # 3. the origin ('AWS::Region' is a AWS prop)
+  Outputs:
+    WebsiteS3BucketName:
+      Value:
+        Ref: WebsiteS3Bucket
+
+    # This will be the endpoint of the website directly to the S3 Bucket
+    # http://my-kindlegen-hosting-dev.s3-website.eu-central-1.amazonaws.com/
+    WebsiteS3DomainName:
+      Value: # <bucket-name>.s3-website-<AWS-region>.amazonaws.com
+        "Fn::Join": [ '', [ Ref: WebsiteS3Bucket, ".s3-website.", Ref: AWS::Region, ".amazonaws.com"] ]
+
+    # This will be the endpoint of the website through the CloudFront CDN
+    # https://d1vai2upklkyks.cloudfront.net/
+    WebsiteCloudFrontDomainName:
+      Value:
+        Fn::GetAtt:
+            - WebsiteCloudFrontDistribution
+            - DomainName
+
+    Region:
+      Value:
+        Ref: AWS::Region

@@ -1,11 +1,42 @@
 {
     "cSpell.words": [
-        "Cognito"
+        "Cognito",
+        "kindlegen",
+        "mobi"
     ],
     "vetur.format.defaultFormatter.js": "vscode-typescript",
     "workbench.colorCustomizations": {
         "activityBar.background": "#02314B",
         "titleBar.activeBackground": "#034468",
         "titleBar.activeForeground": "#F5FBFF"
-    }
+    },
+    "yaml.customTags": [
+        "!And",
+        "!And sequence",
+        "!If",
+        "!If sequence",
+        "!Not",
+        "!Not sequence",
+        "!Equals",
+        "!Equals sequence",
+        "!Or",
+        "!Or sequence",
+        "!FindInMap",
+        "!FindInMap sequence",
+        "!Base64",
+        "!Join",
+        "!Join sequence",
+        "!Cidr",
+        "!Ref",
+        "!Sub",
+        "!Sub sequence",
+        "!GetAtt",
+        "!GetAZs",
+        "!ImportValue",
+        "!ImportValue sequence",
+        "!Select",
+        "!Select sequence",
+        "!Split",
+        "!Split sequence"
+    ]
 }

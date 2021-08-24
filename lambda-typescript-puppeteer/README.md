@@ -37,7 +37,7 @@ Serverless: Typescript compiled.
 * Run ```npm install``` to install all the necessary dependencies.
 * Run ```npm run local``` use serverless offline to test locally.
 
-### Deploy on AWS, simply run:
+### Deploy on AWS, simply run
 
 ```bash
 $ npm run deploy

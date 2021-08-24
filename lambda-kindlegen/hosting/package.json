@@ -1,0 +1,15 @@
+{
+  "name": "hosting",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Rumen Neshev <rstardev@abv.bg>",
+  "license": "MIT",
+  "devDependencies": {
+    "serverless-s3-sync": "^1.17.1"
+  }
+}

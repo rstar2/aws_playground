@@ -28,8 +28,15 @@ const kindlegen = async (record) => {
     writeFileSync(inFilePath, s3Object.Body);
 
     // convert using KindleGen
+    // NOTE - the output is set to use the stdout/stderr of the 'parent'
+    // so that logs will be visible in AWS CloudWatch
     try {
-        const child_process = spawnSync(
+        // this will not work - pipe it through qemu-i386-static
+        // execSync(
+        //     `/opt/kindlegen ${inFilePath}`,
+        //     { stdio: 'inherit' }
+        // );
+        spawnSync(
             '/opt/qemu-i386-static',
             [
                 '/opt/kindlegen',
@@ -37,18 +44,15 @@ const kindlegen = async (record) => {
             ],
             { stdio: 'inherit' }
         );
-        // const child_process = execSync(
-        //     `/opt/kindlegen ${inFilePath}`,
-        //     { stdio: 'inherit' }
-        // );
-        // console.log('kindlegen result:', child_process );
 
     } catch (e) {
         console.error('kindlegen failed', e);
     }
+
+    // just for tests
     execSync('ls -la /tmp',{ stdio: 'inherit' });
 
-    // read 'mobi' from disk
+    // read the converted 'mobi' file from disk
     const mobiFile = readFileSync(outFilePath);
 
     try {
