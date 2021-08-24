@@ -129,8 +129,9 @@ resources:
 
   # When used ```sls deploy --verbose``` or ```sls info --verbose``` will print the outputs:
   # 1. the name of the website S3 Bucket,
-  # 2. the CloudFront distribution domain
-  # 3. the origin ('AWS::Region' is a AWS prop)
+  # 2. the S3 Bucket domain
+  # 3. the CloudFront distribution domain
+  # 4. the origin ('AWS::Region' is a AWS prop)
   Outputs:
     WebsiteS3BucketName:
       Value:
@@ -149,7 +150,6 @@ resources:
         Fn::GetAtt:
             - WebsiteCloudFrontDistribution
             - DomainName
-
-    Region:
-      Value:
-        Ref: AWS::Region
+    # Region:
+    #   Value:
+    #     Ref: AWS::Region

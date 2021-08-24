@@ -37,4 +37,9 @@ See https://forums.aws.amazon.com/thread.jspa?threadID=166825
 ## Remove the CloudFormations
 
 This time the removal process ust be the other way around, e.g first remove the Lambda and then the Layer as the Lambda uses a reference to the Layer.
-Note for the Lambda stack to be deleted the S# bucket has to be empty.
+Note for the Lambda stack to be deleted the S3 bucket has to be empty.
+
+## TODO
+
+1. Describe the technologies used
+1. Create a real client app to be hosted (use Vue, Vite)
