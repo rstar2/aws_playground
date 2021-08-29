@@ -42,4 +42,3 @@ Note for the Lambda stack to be deleted the S3 bucket has to be empty.
 ## TODO
 
 1. Describe the technologies used
-1. Create a real client app to be hosted (use Vue, Vite)

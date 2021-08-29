@@ -1,16 +1,19 @@
 {
-  "name": "hosting",
+  "name": "lambda",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "npm --prefix ./app run build && sls deploy"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "Rumen Neshev <rstardev@abv.bg>",
   "license": "MIT",
   "devDependencies": {
-    "serverless-s3-sync": "^1.17.1"
+    "@types/aws-lambda": "^8.10.83",
+    "aws-sdk": "^2.976.0"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1"
   }
 }

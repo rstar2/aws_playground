@@ -1,5 +1,8 @@
 ## Use Vite with Vue2
 
+https://www.mathew-paul.nz/posts/how-to-use-vue2-with-vite/
+https://medium.com/nerd-for-tech/from-vue-cli-to-vitejs-648d2f5e031d
+
 1. Create a Vite app with the template for Vue3
 
 ```npm init vite@latest my-vue-app -- --template vue```
