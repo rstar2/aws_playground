@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "dotenv": "^6.1.0",
-    "jsonwebtoken": "^8.4.0"
+    "jsonwebtoken": "^9.0.0"
   },
   "devDependencies": {
     "serverless-offline": "^3.31.1"
