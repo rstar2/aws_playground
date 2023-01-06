@@ -28,7 +28,7 @@ functions:
   scrape:
     handler: app/handler.scrape
     memorySize: 1536MB
-    timeout: 30
+    timeout: 30000
     events:
       - http:
           path: /
